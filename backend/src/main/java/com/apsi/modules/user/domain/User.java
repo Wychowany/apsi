@@ -18,7 +18,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "application_user")
+@Table(name = "application_users")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User extends AbstractIdEntity implements UserDetails {
 
@@ -34,8 +34,6 @@ public class User extends AbstractIdEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    private String phoneNumber;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SystemRole systemRole;
@@ -48,7 +46,6 @@ public class User extends AbstractIdEntity implements UserDetails {
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private boolean confirmed;
-
 
     @Transient
     private Set<SimpleGrantedAuthority> authorities;
@@ -82,5 +79,4 @@ public class User extends AbstractIdEntity implements UserDetails {
     public boolean isEnabled() {
         return accepted;
     }
-
 }
