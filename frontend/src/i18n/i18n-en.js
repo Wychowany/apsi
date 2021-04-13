@@ -66,8 +66,8 @@ export const EN = {
 			"Saturday",
 			"Sunday",
 		],
-		logout: "logout",
-		login: "login",
+		logout: "Log out",
+		login: "Login",
 		loginError: "Bad e-mail or password",
 		serverError: "No connection with server",
 		notAccepted: "The account has not yet been accepted",
@@ -77,10 +77,8 @@ export const EN = {
 	LoginView: {
 		forgotPassword: "Forgot password?",
 		login: "Login",
-		loginAction: "login",
-		password: "password",
-		registerText: "Don't have an account?",
-		registerLink: "Register",
+		loginAction: "Login",
+		password: "Password",
 	},
 
 	navigation: {

@@ -8,19 +8,14 @@
 							<v-card class="elevation-12" v-on:keyup.enter="login">
 								<v-toolbar dark color="primary">
 									<v-row>
-										<v-col cols="4">
-											<v-btn @click="$router.push('/')" class="mx-2" fab dark small
-												color="secondary">
-												<v-icon dark>home</v-icon>
-											</v-btn>
-										</v-col>
-										<v-col cols="8" offset-md="0" style="display: block">
+										<v-col cols="4" style="display: block">
+											<strong class="ml-5">{{$t("LoginView.login")}}</strong>
 										</v-col>
 									</v-row>
 								</v-toolbar>
 								<v-card-text>
 									<v-form>
-										<v-text-field prepend-icon="person" name="email" label="e-mail"
+										<v-text-field prepend-icon="person" name="email" label="E-mail"
 											v-model="credentials.email"
 											type="text"></v-text-field>
 										<v-text-field prepend-icon="lock" name="password"
@@ -35,11 +30,7 @@
 								<v-card-actions>
 									<v-row>
 
-										<v-col cols="6">
-											{{ $t("LoginView.registerText") }}
-											<router-link to="register">{{ $t("LoginView.registerLink") }}
-											</router-link>
-										</v-col>
+										<v-col cols="6"/>
 										<v-col offset="1" cols="5">
 											<div style="float: right">
 												<v-btn color="primary" @click="login">

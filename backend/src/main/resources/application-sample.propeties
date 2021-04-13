@@ -1,7 +1,5 @@
 ### BAZA DANYCH ###
 
-spring.jpa.properties.hibernate.dialect                          = org.hibernate.spatial.dialect.postgis.PostgisDialect
-spring.jpa.database-platform                                     = com.kartashov.postgis.hibernate.JSONPostgisDialect
 spring.datasource.url                                            = jdbc:postgresql://localhost:4000/apsi
 spring.datasource.username                                       = apsi
 spring.datasource.password                                       = apsi
