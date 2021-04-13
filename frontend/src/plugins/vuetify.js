@@ -20,12 +20,16 @@ export var vuetify = new Vuetify({
 			dark: {
 				primary: colors.green,
 				secondary: colors.green.darken1,
+				lighter: colors.green.lighten1,
+				light: colors.green.lighten3,
 				accent: colors.shades.black,
 				error: colors.red.accent3,
 			},
 			light: {
 				primary: colors.green,
 				secondary: colors.green.darken1,
+				lighter: colors.green.lighten1,
+				light: colors.green.lighten3,
 				accent: colors.shades.black,
 				error: colors.red.accent3,
 			},

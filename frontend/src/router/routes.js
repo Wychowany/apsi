@@ -5,6 +5,9 @@ import LoginView from "../view/LoginView";
 import MainView from "../view/logged/main/MainView";
 import ForbiddenView from "@/view/ForbiddenView";
 import NotFoundView from "@/view/NotFoundView";
+import DocumentsView from "@/view/logged/documents/DocumentsView";
+import SeriesView from "@/view/logged/series/SeriesView";
+import UsersView from "@/view/logged/users/UsersView";
 Vue.use(VueRouter);
 
 
@@ -17,7 +20,18 @@ const routes = [
 		path: "/forbidden", component: ForbiddenView,
 	},
 	{
-		path: "/app/main" ,component: MainView
+		path: "/app", component: MainView,
+		children: [
+			{
+				path: "documents", component: DocumentsView,
+			},
+			{
+				path: "series", component: SeriesView,
+			},
+			{
+				path: "users", component: UsersView,
+			}
+		]
 	},
 	{
 		path: "*", component: NotFoundView

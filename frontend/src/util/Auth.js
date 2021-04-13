@@ -14,7 +14,7 @@ export var auth = {
 			headers: {"Content-type": "application/x-www-form-urlencoded"},
 		}).then(async response => {
 			localStorage.setItem("access_token", response.data.access_token);
-			context.$router.push("/app/main")
+			context.$router.push("/app")
 
 		}).catch(error => {
 			context.error_message = "";
@@ -40,7 +40,7 @@ export var auth = {
 	logout(context) {
 		localStorage.removeItem("access_token");
 		localStorage.removeItem("role");
-		context.$router.push("/login");
+		context.$router.push("/");
 	},
 
 };
