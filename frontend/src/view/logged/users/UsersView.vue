@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import {api} from "@/util/Api";
+
 export default {
   name: "UsersView",
 
@@ -35,6 +37,14 @@ export default {
       ],
       users: [],
     }
+  },
+
+  created() {
+    api.get(this, '/users', successResponse => {
+      this.users = successResponse;
+    }, errorResponse => {
+      console.log(errorResponse);
+    });
   }
 }
 </script>

@@ -5,10 +5,10 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="title">
-              Imię nazwisko
+              {{user.name}} {{user.surname}}
             </v-list-item-title>
             <v-list-item-subtitle>
-              Rola
+              {{user.systemRole}}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -43,6 +43,7 @@
 <script>
 
 import {auth} from "@/util/Auth";
+import {api} from "@/util/Api";
 
 export default {
   name: "MainView",
@@ -50,13 +51,21 @@ export default {
   data() {
     return {
       drawer: true,
+      user: {},
       links: [
         { title: 'Dokumenty', address: '/app/documents', icon: 'description' },
         { title: 'Zbiory', address: '/app/series', icon: 'folder_open' },
         { title: 'Użytkownicy', address: '/app/users', icon: 'person' }
       ],
-      mini: true,
     }
+  },
+
+  created() {
+    api.get(this, '/users/logged', successResponse => {
+      this.user = successResponse;
+    }, errorResponse => {
+      console.log(errorResponse);
+    });
   },
 
   methods: {
