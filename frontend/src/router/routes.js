@@ -8,6 +8,9 @@ import NotFoundView from "@/view/NotFoundView";
 import DocumentsView from "@/view/logged/documents/DocumentsView";
 import SeriesView from "@/view/logged/series/SeriesView";
 import UsersView from "@/view/logged/users/UsersView";
+import CreateUserView from "@/view/logged/users/CreateUserView";
+import UsersTemplate from "@/view/logged/users/UsersTemplate";
+import EditUserView from "@/view/logged/users/EditUserView";
 Vue.use(VueRouter);
 
 
@@ -29,7 +32,18 @@ const routes = [
 				path: "series", component: SeriesView,
 			},
 			{
-				path: "users", component: UsersView,
+				path: "users", component: UsersTemplate,
+				children: [
+					{
+						path: "/", component: UsersView,
+					},
+					{
+						path: "create", component: CreateUserView,
+					},
+					{
+						path: "edit/:id", component: EditUserView,
+					}
+				]
 			}
 		]
 	},

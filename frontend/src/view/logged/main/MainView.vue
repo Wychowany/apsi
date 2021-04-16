@@ -29,7 +29,7 @@
 
       <v-app-bar fixed class="no-print navigation-top" id="nav-top" color="primary">
         <v-spacer></v-spacer>
-        <v-btn @click="logout" color="light" class="button-logout">Wyloguj</v-btn>
+        <v-btn @click="logout" color="light" style="color: black">Wyloguj</v-btn>
       </v-app-bar>
 
       <v-main>
@@ -61,7 +61,7 @@ export default {
   },
 
   created() {
-    api.get(this, '/users/logged', successResponse => {
+    api.get(this, '/users/logged', null, successResponse => {
       this.user = successResponse;
     }, errorResponse => {
       console.log(errorResponse);
