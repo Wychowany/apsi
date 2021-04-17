@@ -11,7 +11,6 @@ import com.apsi.modules.user.query.UserRepository;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,7 +86,7 @@ class UserController {
 
     @PutMapping
     public ResponseEntity<?> editUser(@RequestBody EditUserDTO editUserDTO) {
-        logger.info("User with id {} requested user with id {} update with data: {}", identity.getRawId(), editUserDTO.getId(), editUserDTO.toString());
+        logger.info("User with id {} requested user update with data: {}", identity.getRawId(), editUserDTO.toString());
         User user = userRepository.findById(editUserDTO.getId()).orElseThrow();
         user.setName(editUserDTO.getName());
         user.setSurname(editUserDTO.getSurname());

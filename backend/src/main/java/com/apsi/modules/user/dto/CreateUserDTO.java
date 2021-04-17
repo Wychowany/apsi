@@ -2,8 +2,10 @@ package com.apsi.modules.user.dto;
 
 import com.apsi.modules.user.domain.SystemRole;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString(exclude = {"password", "confirmPassword"})
 public class CreateUserDTO {
 
     private String name;

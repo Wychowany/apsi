@@ -12,6 +12,7 @@
       <v-select :items="roles" item-text="name" item-value="value" label="Rola" v-model="user.systemRole"></v-select>
     </v-form>
     <v-btn @click="createUser()" color="primary" style="color: black" class="ma-5">Dodaj użytkownika</v-btn>
+    <v-btn @click="returnPage()" color="primary" style="color: black" class="ma-5 ml-1">Powrót</v-btn>
   </div>
 </template>
 
@@ -48,6 +49,10 @@ export default {
       errorResponse => {
         console.log(errorResponse);
       });
+    },
+
+    returnPage() {
+      this.$router.go(-1);
     }
   }
 }

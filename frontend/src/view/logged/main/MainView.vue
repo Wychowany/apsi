@@ -54,7 +54,9 @@ export default {
       user: {},
       links: [
         { title: 'Dokumenty', address: '/app/documents', icon: 'description' },
+        { title: 'Moje dokumenty', address: '/app/documents/own', icon: 'description' },
         { title: 'Zbiory', address: '/app/series', icon: 'folder_open' },
+        { title: 'Moje zbiory', address: '/app/series/own', icon: 'folder_open' },
         { title: 'Użytkownicy', address: '/app/users', icon: 'person' }
       ],
     }

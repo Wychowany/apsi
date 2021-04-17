@@ -11,6 +11,12 @@ import UsersView from "@/view/logged/users/UsersView";
 import CreateUserView from "@/view/logged/users/CreateUserView";
 import UsersTemplate from "@/view/logged/users/UsersTemplate";
 import EditUserView from "@/view/logged/users/EditUserView";
+import DocumentsTemplate from "@/view/logged/documents/DocumentsTemplate";
+import CreateDocumentView from "@/view/logged/documents/CreateDocumentView";
+import EditDocumentView from "@/view/logged/documents/EditDocumentView";
+import MyDocumentsView from "@/view/logged/documents/MyDocumentsView";
+import SeriesTemplate from "@/view/logged/series/SeriesTemplate";
+import DocumentAccessView from "@/view/logged/documents/DocumentAccessView";
 Vue.use(VueRouter);
 
 
@@ -26,10 +32,35 @@ const routes = [
 		path: "/app", component: MainView,
 		children: [
 			{
-				path: "documents", component: DocumentsView,
+				path: "documents", component: DocumentsTemplate,
+				children: [
+					{
+						path: "/", component: DocumentsView,
+					},
+					{
+						path: "own", component: MyDocumentsView,
+					},
+					{
+						path: "create", component: CreateDocumentView,
+					},
+					{
+						path: "edit/:id", component: EditDocumentView,
+					},
+					{
+						path: "access/:id", component: DocumentAccessView,
+					}
+				]
 			},
 			{
-				path: "series", component: SeriesView,
+				path: "series", component: SeriesTemplate,
+				children: [
+					{
+						path: "/", component: SeriesView,
+					},
+					{
+						path: "own", component: SeriesView,
+					},
+				]
 			},
 			{
 				path: "users", component: UsersTemplate,
@@ -50,8 +81,6 @@ const routes = [
 	{
 		path: "*", component: NotFoundView
 	},
-
-
 ];
 
 export default new VueRouter({
