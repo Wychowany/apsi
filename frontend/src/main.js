@@ -47,7 +47,7 @@ Vue.use(VeeValidate, {
 router.beforeEach((to, from, next) => {
 	if (to.matched.some(record => record.meta.requiresAuth) && localStorage.getItem("access_token") == null) {
 		next({
-			path: "/login",
+			path: "/",
 			query: {next: to.fullPath},
 		});
 	} else if (to.matched.some(record => record.meta.requiresAuth &&
@@ -65,7 +65,7 @@ let api = axios.create({
 	baseURL: process.env.VUE_APP_API_URL,
 });
 
-api.interceptors.request.use((config) => {
+axios.interceptors.request.use((config) => {
 	if (localStorage.getItem("access_token") !== null) {
 		config.headers.Authorization = "Bearer " + localStorage.getItem("access_token");
 	}
@@ -77,7 +77,7 @@ api.interceptors.request.use((config) => {
 });
 
 
-api.interceptors.response.use((config) => {
+axios.interceptors.response.use((config) => {
 	store.commit("loader", false);
 	return config;
 }, (error) => {

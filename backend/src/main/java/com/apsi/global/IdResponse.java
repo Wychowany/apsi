@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class SingleTextDTO {
-	private String text;
+public class IdResponse {
+
+    private Long id;
 }

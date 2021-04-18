@@ -66,8 +66,8 @@ export const PL = {
 			"Sobota",
 			"Niedziela",
 		],
-		logout: "wyloguj",
-		login: "zaloguj",
+		logout: "Wyloguj",
+		login: "Zaloguj",
 		loginError: "Nieprawidłowy e-mail lub hasło",
 		serverError: "Brak połączenia z serwerem",
 		notAccepted: "Konto nie zostało jeszcze zaakceptowane",
@@ -77,10 +77,8 @@ export const PL = {
 	LoginView: {
 		forgotPassword: "Zapomniałeś hasła?",
 		login: "Logowanie",
-		loginAction: "zaloguj",
-		password: "hasło",
-		registerText: "Nie masz jeszcze konta?",
-		registerLink: "Rejestruj",
+		loginAction: "Zaloguj",
+		password: "Hasło",
 	},
 
 	navigation: {

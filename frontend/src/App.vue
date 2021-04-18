@@ -5,10 +5,10 @@
       <SnackBar/>
       <router-view/>
       <div>
-        <v-footer app>
-          <div style="width: 100%">
+        <v-footer app color="light">
+          <div style="width: 100%;">
             <div style="float: left">
-              <span class="one--text">&copy;apsi</span>
+              <span class="one--text"> &copy; Repozytorium dokumentów</span>
             </div>
           </div>
         </v-footer>

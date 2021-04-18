@@ -1,10 +1,7 @@
 package com.apsi.modules.user.domain;
 
 import com.apsi.generic.AbstractIdEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,9 +13,10 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "application_user")
+@Table(name = "application_users")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User extends AbstractIdEntity implements UserDetails {
 
@@ -34,8 +32,6 @@ public class User extends AbstractIdEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    private String phoneNumber;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SystemRole systemRole;
@@ -49,9 +45,13 @@ public class User extends AbstractIdEntity implements UserDetails {
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private boolean confirmed;
 
-
     @Transient
     private Set<SimpleGrantedAuthority> authorities;
+
+    @Transient
+    public String getFullName() {
+        return this.name + " " + this.surname;
+    }
 
     @Override
     public String getUsername() {
@@ -82,5 +82,4 @@ public class User extends AbstractIdEntity implements UserDetails {
     public boolean isEnabled() {
         return accepted;
     }
-
 }
