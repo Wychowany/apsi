@@ -66,6 +66,7 @@
         <div class="ma-5">
           <div v-for="(file, idx) in document.files" :key="'file-' + idx">
             <strong class="mr-2">{{ idx + 1 }}.</strong> {{ file.name }}
+            <v-icon small class="ml-4" color="blue" @click="downloadAttachment(file)">cloud_download</v-icon>
             <v-icon small class="ml-4" color="red" @click="removeAttachment(idx)">delete</v-icon>
           </div>
         </div>
@@ -184,6 +185,10 @@ export default {
 
     removeAttachment(idx) {
       this.document.files.splice(idx, 1);
+    },
+
+    downloadAttachment(file) {
+      this.downloadBase64File(file.encodedData, file.name);
     },
 
     returnPage() {

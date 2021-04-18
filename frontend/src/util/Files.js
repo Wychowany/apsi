@@ -22,5 +22,12 @@ export const Files = {
 				reader.onerror = error => reject(error);
 			});
 		},
+
+		async downloadBase64File(encodedData, fileName) {
+			const downloadLink = document.createElement("a");
+			downloadLink.href = encodedData;
+			downloadLink.download = fileName;
+			downloadLink.click();
+		}
 	}
 };
