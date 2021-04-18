@@ -47,7 +47,7 @@ Vue.use(VeeValidate, {
 router.beforeEach((to, from, next) => {
 	if (to.matched.some(record => record.meta.requiresAuth) && localStorage.getItem("access_token") == null) {
 		next({
-			path: "/login",
+			path: "/",
 			query: {next: to.fullPath},
 		});
 	} else if (to.matched.some(record => record.meta.requiresAuth &&

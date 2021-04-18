@@ -1,60 +1,205 @@
 <template>
-  <div class="ma-3">
+  <div class="ma-3" v-if="dataLoaded">
     <v-toolbar dark color="lighter">
       <v-toolbar-title>Edycja dokumentu</v-toolbar-title>
+      <v-spacer/>
     </v-toolbar>
-    <v-form class="ma-5" style="padding-left: 30px; width: 40%">
-      <div class="ma-2">
-        <strong class="mr-2">Autor:</strong> {{ document.author }}
-      </div>
-      <div class="ma-2">
-        <strong class="mr-2">Nazwa:</strong> {{ document.name }}
-      </div>
-      <div class="ma-2">
-        <strong class="mr-2">Opis:</strong> {{ document.description }}
-      </div>
-    </v-form>
-    <v-btn @click="saveDocument()" color="primary" style="color: black" class="ma-5">Zapisz dokument</v-btn>
+    <v-layout>
+      <v-flex xs10>
+        <v-form class="ma-5" style="padding-left: 30px">
+          <div class="ma-2">
+            <strong class="mr-2">Autor dokumentu:</strong> {{ document.creator }}
+          </div>
+          <div class="ma-2">
+            <strong class="mr-2">Autor wersji:</strong> {{ document.author }}
+          </div>
+          <div class="ma-2">
+            <strong class="mr-2">Nazwa:</strong> {{ document.name }}
+          </div>
+          <div class="ma-2">
+            <strong class="mr-2">Opis:</strong> {{ document.description }}
+          </div>
+        </v-form>
+      </v-flex>
+      <v-flex xs2 mt-5 mr-5>
+        <v-select background-color="white" :items="versions" label="Wersja" outlined v-model="document.documentVersion"/>
+      </v-flex>
+    </v-layout>
+
+    <v-layout>
+      <v-flex xs6 ml-4 mr-4>
+        <v-toolbar dark color="lighter">
+          <v-toolbar-title>Użytkownicy</v-toolbar-title>
+        </v-toolbar>
+        <div class="ma-4">
+          <strong>Kontroler:</strong>
+          <v-autocomplete label="Kontroler" v-model="document.controllerId" :items="employees"
+                          item-text="fullName" item-value="id" clearable
+                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
+        </div>
+        <div class="ma-4">
+          <strong>Recenzent:</strong>
+          <v-autocomplete label="Recenzent" v-model="document.reviewerId" :items="employees"
+                          item-text="fullName" item-value="id" clearable
+                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
+        </div>
+        <div class="ma-4">
+          <strong>Osoba zatwierdzająca:</strong>
+          <v-autocomplete label="Osoba zatwierdzająca" v-model="document.approverId" :items="employees"
+                          item-text="fullName" item-value="id" clearable
+                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
+        </div>
+        <div class="ma-4">
+          <strong>Osoba odbierająca:</strong>
+          <v-autocomplete label="Osoba odbierająca" v-model="document.receiverId" :items="employees"
+                          item-text="fullName" item-value="id" clearable
+                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
+        </div>
+      </v-flex>
+      <v-flex xs6 ml-4 mr-4>
+        <v-toolbar dark color="lighter">
+          <v-toolbar-title>Załączniki</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn :disabled="false" @click="$refs.attachment.click()" color="light"
+                 style="color: black" class="ma-5">Dodaj załącznik</v-btn>
+        </v-toolbar>
+        <div class="ma-5">
+          <div v-for="(file, idx) in document.files" :key="'file-' + idx">
+            <strong class="mr-2">{{ idx + 1 }}.</strong> {{ file.name }}
+            <v-icon small class="ml-4" color="red" @click="removeAttachment(idx)">delete</v-icon>
+          </div>
+        </div>
+      </v-flex>
+    </v-layout>
+
+    <v-btn @click="saveDocumentDialog = true" color="primary" style="color: black" class="ma-5">Zapisz nową wersję</v-btn>
     <v-btn @click="returnPage()" color="primary" style="color: black" class="ma-5 ml-1">Powrót</v-btn>
+
+    <input type="file" ref="attachment" v-show="false" v-on:change="handleUpload">
+    <EditConfirmationDialog :header="'Dodanie nowej wersji dokumentu'" :show="saveDocumentDialog"
+                            :message="'Wprowadź wersję dokumentu'" @close="saveDocumentDialog = false"
+                            @save="saveDocument"/>
   </div>
 </template>
 
 <script>
 import {api} from "@/util/Api";
+import {Files} from "@/util/Files";
+import EditConfirmationDialog from "@/view/logged/documents/EditConfirmationDialog";
+
 
 export default {
   name: "EditDocumentView",
+  components: {EditConfirmationDialog},
+  mixins: [Files],
 
   data() {
     return {
       document: {
         name: '',
         description: '',
+        creator: '',
+        documentVersion: '',
+        status: '',
         author: '',
-      }
+        controllerId: null,
+        reviewerId: null,
+        approverId: null,
+        receiverId: null,
+        files: [],
+      },
+      employees: [],
+      versions: [],
+      versionsLoaded: false,
+      documentLoaded: false,
+      employeesLoaded: false,
+      saveDocumentDialog: false,
     };
   },
 
+  computed: {
+    dataLoaded() {
+      return this.versionsLoaded && this.documentLoaded && this.employeesLoaded;
+    }
+  },
+
+  watch: {
+    "document.documentVersion"(val) {
+      api.get(this, '/documents', {id: this.$route.params.id, version: val}, successResponse => {
+        this.document = successResponse;
+        this.documentLoaded = true;
+      }, errorResponse => {
+        console.log(errorResponse);
+      });
+    }
+  },
+
   created() {
+    api.get(this, '/documents/versions', {id: this.$route.params.id}, successResponse => {
+      this.versions = successResponse.map(item => item.version);
+      this.versionsLoaded = true;
+    }, errorResponse => {
+      console.log(errorResponse);
+    });
+
     api.get(this, '/documents', {id: this.$route.params.id}, successResponse => {
       this.document = successResponse;
+      this.documentLoaded = true;
+    }, errorResponse => {
+      console.log(errorResponse);
+    });
+
+    api.get(this, '/users/employees', null, successResponse => {
+      this.employees = successResponse;
+      this.employeesLoaded = true;
     }, errorResponse => {
       console.log(errorResponse);
     });
   },
 
   methods: {
-    saveDocument() {
-      api.put(this, '/documents', this.document, () => {
-            this.$router.go(-1);
+    saveDocument(version) {
+      let requestData = this.prepareRequest(version);
+      api.put(this, '/documents', requestData, () => {
+            this.saveDocumentDialog = false;
+            this.versions.push(version);
+            this.document.documentVersion = version;
           },
           errorResponse => {
             console.log(errorResponse);
           });
     },
 
+    prepareRequest(version) {
+      return {
+        id: this.$route.params.id,
+        documentVersion: version,
+        controllerId: this.document.controllerId,
+        reviewerId: this.document.reviewerId,
+        approverId: this.document.approverId,
+        receiverId: this.document.receiverId,
+        files: this.document.files
+      }
+    },
+
+    removeAttachment(idx) {
+      this.document.files.splice(idx, 1);
+    },
+
     returnPage() {
       this.$router.go(-1);
+    },
+
+    async handleUpload() {
+      const file = this.$refs.attachment.files[0];
+      let attachment = {
+        id: null,
+        name: file.name,
+        format: file.format,
+        length: file.size,
+        encodedData: await this.fileToBase64(file)
+      }
+      this.document.files.push(attachment);
     }
   }
 }

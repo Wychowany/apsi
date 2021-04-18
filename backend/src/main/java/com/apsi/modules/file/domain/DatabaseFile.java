@@ -1,10 +1,12 @@
 package com.apsi.modules.file.domain;
 
 import com.apsi.generic.AbstractIdEntity;
+import com.apsi.modules.file.dto.FileDTO;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 
 @Getter
 @Setter
@@ -20,6 +22,14 @@ public class DatabaseFile extends AbstractIdEntity {
 
     private long length;
 
-    @Type(type = "org.hibernate.type.BinaryType")
-    private byte[] bytes;
+    @Lob
+    @Type(type = "text")
+    private String encodedData;
+
+    public DatabaseFile(FileDTO fileDTO) {
+        this.name = fileDTO.getName();
+        this.format = fileDTO.getFormat();
+        this.length = fileDTO.getLength();
+        this.encodedData = fileDTO.getEncodedData();
+    }
 }

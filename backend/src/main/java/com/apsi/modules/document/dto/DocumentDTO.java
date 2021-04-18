@@ -15,6 +15,6 @@ public class DocumentDTO {
     public DocumentDTO(Document document) {
         this.id = document.getId();
         this.name = document.getName();
-        this.author = document.getAuthor().getName() + " " + document.getAuthor().getSurname();
+        this.author = document.getAuthor().getFullName();
     }
 }

@@ -48,6 +48,11 @@ public class User extends AbstractIdEntity implements UserDetails {
     @Transient
     private Set<SimpleGrantedAuthority> authorities;
 
+    @Transient
+    public String getFullName() {
+        return this.name + " " + this.surname;
+    }
+
     @Override
     public String getUsername() {
         return email;

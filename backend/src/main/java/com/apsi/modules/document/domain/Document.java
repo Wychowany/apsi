@@ -3,6 +3,7 @@ package com.apsi.modules.document.domain;
 import com.apsi.generic.AbstractIdEntity;
 import com.apsi.modules.user.domain.User;
 import lombok.*;
+import org.hibernate.annotations.JoinFormula;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -30,6 +31,15 @@ public class Document extends AbstractIdEntity {
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "document")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "document", fetch = FetchType.EAGER)
     private List<DocumentData> documentDataList = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinFormula("(" +
+            "SELECT dd.id " +
+            "FROM documents_data dd " +
+            "WHERE dd.document_id = id " +
+            "ORDER BY dd.creation_date " +
+            "DESC LIMIT 1)")
+    private DocumentData documentData;
 }

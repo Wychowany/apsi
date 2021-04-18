@@ -3,10 +3,12 @@ package com.apsi.modules.user;
 import com.apsi.global.ErrorResponse;
 import com.apsi.global.Identity;
 import com.apsi.global.OkResponse;
+import com.apsi.modules.user.domain.SystemRole;
 import com.apsi.modules.user.domain.User;
 import com.apsi.modules.user.dto.CreateUserDTO;
 import com.apsi.modules.user.dto.EditUserDTO;
 import com.apsi.modules.user.dto.UserDTO;
+import com.apsi.modules.user.dto.UserNameDTO;
 import com.apsi.modules.user.query.UserRepository;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -47,6 +49,13 @@ class UserController {
     public ResponseEntity<?> getUsers() {
         List<User> users = userRepository.findAllByDeletedIsFalse();
         List<UserDTO> response = users.stream().map(UserDTO::new).collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/employees")
+    public ResponseEntity<?> getEmployees() {
+        List<User> users = userRepository.findAllByDeletedIsFalseAndSystemRoleIsIn(List.of(SystemRole.ADMINISTRATOR, SystemRole.EMPLOYEE));
+        List<UserNameDTO> response = users.stream().map(UserNameDTO::new).collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
 
