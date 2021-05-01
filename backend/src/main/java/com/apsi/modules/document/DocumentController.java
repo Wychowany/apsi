@@ -3,7 +3,6 @@ package com.apsi.modules.document;
 import com.apsi.global.IdResponse;
 import com.apsi.global.Identity;
 import com.apsi.global.OkResponse;
-import com.apsi.global.StringResponse;
 import com.apsi.modules.document.domain.Document;
 import com.apsi.modules.document.domain.DocumentData;
 import com.apsi.modules.document.dto.CreateDocumentDTO;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
