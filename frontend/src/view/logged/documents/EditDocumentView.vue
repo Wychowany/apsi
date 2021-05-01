@@ -77,21 +77,20 @@
     <v-btn @click="returnPage()" color="primary" style="color: black" class="ma-5 ml-1">Powrót</v-btn>
 
     <input type="file" ref="attachment" v-show="false" v-on:change="handleUpload">
-    <EditConfirmationDialog :header="'Dodanie nowej wersji dokumentu'" :show="saveDocumentDialog"
-                            :message="'Wprowadź wersję dokumentu'" @close="saveDocumentDialog = false"
-                            @save="saveDocument"/>
+    <EditTextDialog :header="'Dodanie nowej wersji dokumentu'" :show="saveDocumentDialog" :label="'Wersja'"
+                            @close="saveDocumentDialog = false" @save="saveDocument"/>
   </div>
 </template>
 
 <script>
 import {api} from "@/util/Api";
 import {Files} from "@/util/Files";
-import EditConfirmationDialog from "@/view/logged/documents/EditConfirmationDialog";
+import EditTextDialog from "@/view/logged/dialogs/EditTextDialog";
 
 
 export default {
   name: "EditDocumentView",
-  components: {EditConfirmationDialog},
+  components: {EditTextDialog},
   mixins: [Files],
 
   data() {
