@@ -5,12 +5,12 @@ import com.apsi.global.Identity;
 import com.apsi.global.OkResponse;
 import com.apsi.modules.document.domain.Document;
 import com.apsi.modules.document.domain.DocumentData;
-import com.apsi.modules.document.dto.CreateDocumentDTO;
-import com.apsi.modules.document.dto.DocumentDTO;
-import com.apsi.modules.document.dto.DocumentDataDTO;
-import com.apsi.modules.document.dto.EditDocumentDTO;
+import com.apsi.modules.document.domain.DocumentUser;
+import com.apsi.modules.document.dto.*;
 import com.apsi.modules.document.query.DocumentDataRepository;
 import com.apsi.modules.document.query.DocumentRepository;
+import com.apsi.modules.documentRole.domain.DocumentRole;
+import com.apsi.modules.documentRole.query.DocumentRoleRepository;
 import com.apsi.modules.file.domain.DatabaseFile;
 import com.apsi.modules.user.domain.User;
 import com.apsi.modules.user.query.UserRepository;
@@ -35,6 +35,9 @@ public class DocumentController {
 
     @Autowired
     private final DocumentRepository documentRepository;
+
+    @Autowired
+    private final DocumentRoleRepository documentRoleRepository;
 
     @Autowired
     private final DocumentDataRepository documentDataRepository;
@@ -75,18 +78,13 @@ public class DocumentController {
     public ResponseEntity<?> createDocument(@RequestBody CreateDocumentDTO createDocumentDTO) {
         logger.info("User with id {} requested new document creation with data: {}", identity.getRawId(), createDocumentDTO.toString());
         User author = userRepository.findById(identity.getRawId()).orElseThrow();
-        User controller = getUserFromDatabase(createDocumentDTO.getControllerId());
-        User reviewer = getUserFromDatabase(createDocumentDTO.getReviewerId());
-        User approver = getUserFromDatabase(createDocumentDTO.getApproverId());
-        User receiver = getUserFromDatabase(createDocumentDTO.getReceiverId());
         Document document = Document.builder()
                 .name(createDocumentDTO.getName())
                 .description(createDocumentDTO.getDescription())
                 .author(author)
                 .build();
-        document.setDocumentDataList(List.of(new DocumentData(document, createDocumentDTO.getDocumentVersion(),
-                createDocumentDTO.getFiles().stream().map(DatabaseFile::new).collect(Collectors.toList()),
-                author, controller, reviewer, approver, receiver)));
+        document.setDocumentUsers(prepareDocumentUserList(document, createDocumentDTO.getDocumentUsers()));
+        document.setDocumentDataList(prepareNewDocumentDataList(document, createDocumentDTO, author));
         Document savedDocument = documentRepository.save(document);
         return ResponseEntity.ok(new IdResponse(savedDocument.getId()));
     }
@@ -96,13 +94,7 @@ public class DocumentController {
         logger.info("User with id {} created new document version with data: {}", identity.getRawId(), editDocumentDTO.toString());
         Document document = documentRepository.findById(editDocumentDTO.getId()).orElseThrow();
         User author = userRepository.findById(identity.getRawId()).orElseThrow();
-        User controller = getUserFromDatabase(editDocumentDTO.getControllerId());
-        User reviewer = getUserFromDatabase(editDocumentDTO.getReviewerId());
-        User approver = getUserFromDatabase(editDocumentDTO.getApproverId());
-        User receiver = getUserFromDatabase(editDocumentDTO.getReceiverId());
-        document.getDocumentDataList().add(new DocumentData(document, editDocumentDTO.getDocumentVersion(),
-                editDocumentDTO.getFiles().stream().map(DatabaseFile::new).collect(Collectors.toList()),
-                author, controller, reviewer, approver, receiver));
+        document.getDocumentDataList().add(prepareDocumentDataListExtension(document, editDocumentDTO, author));
         documentRepository.save(document);
         return ResponseEntity.ok(new OkResponse());
     }
@@ -118,8 +110,30 @@ public class DocumentController {
         return userRepository.findById(userId).orElseThrow();
     }
 
+    private DocumentRole getDocumentRoleFromDatabase(Long documentRoleId) {
+        return documentRoleRepository.findById(documentRoleId).orElseThrow();
+    }
+
     private DocumentData getDocumentVersionData(Document document, String version) {
         Optional<DocumentData> documentData = document.getDocumentDataList().stream().filter(dd -> dd.getDocumentVersion().equals(version)).findFirst();
         return documentData.orElseGet(document::getDocumentData);
+    }
+
+    private List<DocumentUser> prepareDocumentUserList(Document document, List<DocumentUserDTO> documentUsers) {
+        return documentUsers.stream().map(userDTO -> new DocumentUser(
+                getUserFromDatabase(userDTO.getUserId()),
+                document,
+                getDocumentRoleFromDatabase(userDTO.getRoleId())
+        )).collect(Collectors.toList());
+    }
+
+    private List<DocumentData> prepareNewDocumentDataList(Document document, CreateDocumentDTO createDocumentDTO, User author) {
+        return List.of(new DocumentData(document, createDocumentDTO.getDocumentVersion(),
+                createDocumentDTO.getFiles().stream().map(DatabaseFile::new).collect(Collectors.toList()), author));
+    }
+
+    private DocumentData prepareDocumentDataListExtension(Document document, EditDocumentDTO editDocumentDTO, User author) {
+        return new DocumentData(document, editDocumentDTO.getDocumentVersion(),
+                editDocumentDTO.getFiles().stream().map(DatabaseFile::new).collect(Collectors.toList()), author);
     }
 }
