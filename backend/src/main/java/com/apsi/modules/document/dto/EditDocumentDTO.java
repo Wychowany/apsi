@@ -12,13 +12,5 @@ public class EditDocumentDTO {
 
     private String documentVersion;
 
-    private Long controllerId;
-
-    private Long reviewerId;
-
-    private Long approverId;
-
-    private Long receiverId;
-
     private List<FileDTO> files;
 }

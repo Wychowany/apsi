@@ -6,7 +6,7 @@
         <v-card-text>
           <v-form class="ma-5">
             <v-layout>
-              <v-flex xs7>
+              <v-flex xs10>
                 <v-text-field :label="label" type="text" class="ml-5" v-model="internalValue"></v-text-field>
               </v-flex>
             </v-layout>

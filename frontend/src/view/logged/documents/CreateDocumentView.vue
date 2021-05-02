@@ -26,76 +26,74 @@
       <v-flex xs6 ml-4 mr-4>
         <v-toolbar dark color="lighter">
           <v-toolbar-title>Użytkownicy</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn @click="documentUserDialog = true" color="light"
+                 style="color: black" class="ma-5">Dodaj użytkownika</v-btn>
         </v-toolbar>
-        <div class="ma-4">
-          <strong>Kontroler:</strong>
-          <v-autocomplete label="Kontroler" v-model="document.controllerId" :items="employees"
-                          item-text="fullName" item-value="id" clearable
-                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
-        </div>
-        <div class="ma-4">
-          <strong>Recenzent:</strong>
-          <v-autocomplete label="Recenzent" v-model="document.reviewerId" :items="employees"
-                          item-text="fullName" item-value="id" clearable
-                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
-        </div>
-        <div class="ma-4">
-          <strong>Osoba zatwierdzająca:</strong>
-          <v-autocomplete label="Osoba zatwierdzająca" v-model="document.approverId" :items="employees"
-                          item-text="fullName" item-value="id" clearable
-                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
-        </div>
-        <div class="ma-4">
-          <strong>Osoba odbierająca:</strong>
-          <v-autocomplete label="Osoba odbierająca" v-model="document.receiverId" :items="employees"
-                          item-text="fullName" item-value="id" clearable
-                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
+        <v-alert type="info" class="ma-5" v-if="document.documentUsers.length === 0">
+          Brak dodanych użytkowników.
+        </v-alert>
+        <div class="ma-5">
+          <div v-for="(user, idx) in document.documentUsers" :key="'user-' + idx" class="mt-1">
+            <strong class="mr-3"> {{ documentRoles.find(r => r.id === user.roleId).name }}: </strong>
+            <span> {{ employees.find(e => e.id === user.userId).fullName }} </span>
+            <v-icon small class="ml-4" color="red" @click="removeDocumentUser(idx)">delete</v-icon>
+          </div>
         </div>
       </v-flex>
       <v-flex xs6 ml-4 mr-4>
         <v-toolbar dark color="lighter">
           <v-toolbar-title>Załączniki</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn :disabled="false" @click="$refs.attachment.click()" color="light"
+          <v-btn @click="$refs.attachment.click()" color="light"
                  style="color: black" class="ma-5">Dodaj załącznik</v-btn>
         </v-toolbar>
+        <v-alert type="info" class="ma-5" v-if="document.files.length === 0">
+          Brak dodanych załączników.
+        </v-alert>
         <div class="ma-5">
-          <div v-for="(file, idx) in document.files" :key="'file-' + idx">
+          <div v-for="(file, idx) in document.files" :key="'file-' + idx" class="mt-1">
             <strong class="mr-2">{{ idx + 1 }}.</strong> {{ file.name }}
+            <v-icon small class="ml-4" color="blue" @click="downloadAttachment(file)">cloud_download</v-icon>
             <v-icon small class="ml-4" color="red" @click="removeAttachment(idx)">delete</v-icon>
           </div>
         </div>
       </v-flex>
     </v-layout>
-    <v-btn @click="createDocument(false)" color="primary" style="color: black" class="ma-5">Dodaj dokument</v-btn>
-    <v-btn @click="createDocument(true)" color="primary" style="color: black" class="ma-5 ml-1">Dodaj dokument i przejdź do edycji</v-btn>
-    <v-btn @click="returnPage()" color="primary" style="color: black" class="ma-5 ml-1">Powrót</v-btn>
+    <div class="mt-5">
+      <v-btn @click="createDocument(false)" color="primary" style="color: black" class="ma-5">Dodaj dokument</v-btn>
+      <v-btn @click="createDocument(true)" color="primary" style="color: black" class="ma-5 ml-1">Dodaj dokument i przejdź do edycji</v-btn>
+      <v-btn @click="returnPage()" color="primary" style="color: black" class="ma-5 ml-1">Powrót</v-btn>
+    </div>
 
     <input type="file" ref="attachment" v-show="false" v-on:change="handleUpload">
+
+    <DocumentUserDialog :show="documentUserDialog" @close="documentUserDialog = false"
+                        :document-roles="documentRoles" :employees="employees" @save="addDocumentUser"/>
   </div>
 </template>
 
 <script>
 import {api} from "@/util/Api";
 import {Files} from "@/util/Files";
+import DocumentUserDialog from "@/view/logged/documents/DocumentUserDialog";
 
 export default {
   name: "CreateDocumentView",
-
+  components: {DocumentUserDialog},
   mixins: [Files],
 
   data() {
     return {
       creator: {},
+      documentRoles: [],
       employees: [],
+      documentUserDialog: false,
       document: {
         name: '',
         description: '',
         documentVersion: '1.0',
-        controllerId: null,
-        reviewerId: null,
-        approverId: null,
-        receiverId: null,
+        documentUsers: [],
         files: [],
       }
     };
@@ -104,6 +102,12 @@ export default {
   created() {
     api.get(this, '/users/logged', null, successResponse => {
       this.creator = successResponse;
+    }, errorResponse => {
+      console.log(errorResponse);
+    });
+
+    api.get(this, '/document-roles/list', null,successResponse => {
+      this.documentRoles = successResponse;
     }, errorResponse => {
       console.log(errorResponse);
     });
@@ -129,6 +133,10 @@ export default {
           });
     },
 
+    downloadAttachment(file) {
+      this.downloadBase64File(file.encodedData, file.name);
+    },
+
     removeAttachment(idx) {
       this.document.files.splice(idx, 1);
     },
@@ -143,6 +151,15 @@ export default {
         encodedData: await this.fileToBase64(file)
       }
       this.document.files.push(attachment);
+    },
+
+    addDocumentUser(userId, roleId) {
+      this.document.documentUsers.push({ userId, roleId });
+      this.documentUserDialog = false;
+    },
+
+    removeDocumentUser(idx) {
+      this.document.documentUsers.splice(idx, 1);
     },
 
     returnPage() {
