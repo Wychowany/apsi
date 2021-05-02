@@ -26,21 +26,11 @@ public class DocumentDataDTO {
 
     private String author;
 
-    private Long controllerId;
-
-    private Long reviewerId;
-
-    private Long approverId;
-
-    private Long receiverId;
+    private List<DocumentUserNameDTO> documentUsers;
 
     private List<FileDTO> files;
 
     public DocumentDataDTO(DocumentData documentData) {
-        User controller = documentData.getController();
-        User reviewer = documentData.getReviewer();
-        User approver = documentData.getApprover();
-        User receiver = documentData.getReceiver();
         this.id = documentData.getDocument().getId();
         this.name = documentData.getDocument().getName();
         this.description = documentData.getDocument().getDescription();
@@ -48,10 +38,7 @@ public class DocumentDataDTO {
         this.documentVersion = documentData.getDocumentVersion();
         this.status = documentData.getStatus();
         this.author = documentData.getAuthor().getFullName();
-        this.controllerId = controller != null ? controller.getId() : null;
-        this.reviewerId = reviewer != null ? reviewer.getId() : null;
-        this.approverId = approver != null ? approver.getId() : null;
-        this.receiverId = receiver != null ? receiver.getId() : null;
+        this.documentUsers = documentData.getDocument().getDocumentUsers().stream().map(DocumentUserNameDTO::new).collect(Collectors.toList());
         this.files = documentData.getFiles().stream().map(FileDTO::new).collect(Collectors.toList());
     }
 }

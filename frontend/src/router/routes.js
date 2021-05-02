@@ -17,6 +17,7 @@ import EditDocumentView from "@/view/logged/documents/EditDocumentView";
 import MyDocumentsView from "@/view/logged/documents/MyDocumentsView";
 import SeriesTemplate from "@/view/logged/series/SeriesTemplate";
 import DocumentAccessView from "@/view/logged/documents/DocumentAccessView";
+import DocumentRolesView from "@/view/logged/documentRoles/DocumentRolesView";
 Vue.use(VueRouter);
 
 
@@ -75,6 +76,9 @@ const routes = [
 						path: "edit/:id", component: EditUserView,
 					}
 				]
+			},
+			{
+				path: "document-roles", component: DocumentRolesView,
 			}
 		]
 	},

@@ -31,29 +31,14 @@
         <v-toolbar dark color="lighter">
           <v-toolbar-title>Użytkownicy</v-toolbar-title>
         </v-toolbar>
-        <div class="ma-4">
-          <strong>Kontroler:</strong>
-          <v-autocomplete label="Kontroler" v-model="document.controllerId" :items="employees"
-                          item-text="fullName" item-value="id" clearable
-                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
-        </div>
-        <div class="ma-4">
-          <strong>Recenzent:</strong>
-          <v-autocomplete label="Recenzent" v-model="document.reviewerId" :items="employees"
-                          item-text="fullName" item-value="id" clearable
-                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
-        </div>
-        <div class="ma-4">
-          <strong>Osoba zatwierdzająca:</strong>
-          <v-autocomplete label="Osoba zatwierdzająca" v-model="document.approverId" :items="employees"
-                          item-text="fullName" item-value="id" clearable
-                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
-        </div>
-        <div class="ma-4">
-          <strong>Osoba odbierająca:</strong>
-          <v-autocomplete label="Osoba odbierająca" v-model="document.receiverId" :items="employees"
-                          item-text="fullName" item-value="id" clearable
-                          outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
+        <v-alert type="info" class="ma-5" v-if="document.documentUsers.length === 0">
+          Brak dodanych użytkowników.
+        </v-alert>
+        <div class="ma-5">
+          <div v-for="(user, idx) in document.documentUsers" :key="'user-' + idx" class="mt-1">
+            <strong class="mr-3"> {{ user.role }}: </strong>
+            <span> {{ user.fullName }} </span>
+          </div>
         </div>
       </v-flex>
       <v-flex xs6 ml-4 mr-4>
@@ -63,8 +48,11 @@
           <v-btn :disabled="false" @click="$refs.attachment.click()" color="light"
                  style="color: black" class="ma-5">Dodaj załącznik</v-btn>
         </v-toolbar>
+        <v-alert type="info" class="ma-5" v-if="document.files.length === 0">
+          Brak dodanych załączników.
+        </v-alert>
         <div class="ma-5">
-          <div v-for="(file, idx) in document.files" :key="'file-' + idx">
+          <div v-for="(file, idx) in document.files" :key="'file-' + idx" class="mt-1">
             <strong class="mr-2">{{ idx + 1 }}.</strong> {{ file.name }}
             <v-icon small class="ml-4" color="blue" @click="downloadAttachment(file)">cloud_download</v-icon>
             <v-icon small class="ml-4" color="red" @click="removeAttachment(idx)">delete</v-icon>
@@ -77,21 +65,21 @@
     <v-btn @click="returnPage()" color="primary" style="color: black" class="ma-5 ml-1">Powrót</v-btn>
 
     <input type="file" ref="attachment" v-show="false" v-on:change="handleUpload">
-    <EditConfirmationDialog :header="'Dodanie nowej wersji dokumentu'" :show="saveDocumentDialog"
-                            :message="'Wprowadź wersję dokumentu'" @close="saveDocumentDialog = false"
-                            @save="saveDocument"/>
+
+    <EditTextDialog :header="'Dodanie nowej wersji dokumentu'" :show="saveDocumentDialog" :label="'Wersja'"
+                            @close="saveDocumentDialog = false" @save="saveDocument"/>
   </div>
 </template>
 
 <script>
 import {api} from "@/util/Api";
 import {Files} from "@/util/Files";
-import EditConfirmationDialog from "@/view/logged/documents/EditConfirmationDialog";
+import EditTextDialog from "@/view/logged/dialogs/EditTextDialog";
 
 
 export default {
   name: "EditDocumentView",
-  components: {EditConfirmationDialog},
+  components: {EditTextDialog},
   mixins: [Files],
 
   data() {
@@ -103,12 +91,9 @@ export default {
         documentVersion: '',
         status: '',
         author: '',
-        controllerId: null,
-        reviewerId: null,
-        approverId: null,
-        receiverId: null,
         files: [],
       },
+      documentRoles: [],
       employees: [],
       versions: [],
       versionsLoaded: false,
@@ -150,6 +135,12 @@ export default {
       console.log(errorResponse);
     });
 
+    api.get(this, '/document-roles/list', null,successResponse => {
+      this.documentRoles = successResponse;
+    }, errorResponse => {
+      console.log(errorResponse);
+    });
+
     api.get(this, '/users/employees', null, successResponse => {
       this.employees = successResponse;
       this.employeesLoaded = true;
@@ -175,10 +166,6 @@ export default {
       return {
         id: this.$route.params.id,
         documentVersion: version,
-        controllerId: this.document.controllerId,
-        reviewerId: this.document.reviewerId,
-        approverId: this.document.approverId,
-        receiverId: this.document.receiverId,
         files: this.document.files
       }
     },
@@ -192,7 +179,7 @@ export default {
     },
 
     returnPage() {
-      this.$router.go(-1);
+      this.$router.push("/app/documents");
     },
 
     async handleUpload() {

@@ -1,13 +1,11 @@
 package com.apsi.modules.document.domain;
 
 import com.apsi.generic.AbstractIdEntity;
-import com.apsi.modules.document.dto.CreateDocumentDTO;
 import com.apsi.modules.file.domain.DatabaseFile;
 import com.apsi.modules.user.domain.User;
 import lombok.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,18 +19,13 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class DocumentData extends AbstractIdEntity {
 
-    public DocumentData(Document document, String documentVersion, List<DatabaseFile> files,
-                        User author, User controller, User reviewer, User approver, User receiver) {
+    public DocumentData(Document document, String documentVersion, List<DatabaseFile> files, User author) {
         document.setDocumentDataList(new ArrayList<>());
         document.getDocumentDataList().add(this);
         this.document = document;
         this.status = DocumentStatus.NEW;
         this.documentVersion = documentVersion;
         this.author = author;
-        this.controller = controller;
-        this.reviewer = reviewer;
-        this.approver = approver;
-        this.receiver = receiver;
         this.files = files;
     }
 
@@ -49,22 +42,6 @@ public class DocumentData extends AbstractIdEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     private User author;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "controller_id")
-    private User controller;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "reviewer_id")
-    private User reviewer;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "approver_id")
-    private User approver;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "receiver_id")
-    private User receiver;
 
     @OneToMany(cascade = CascadeType.ALL)
     @OrderBy("creationDate")
