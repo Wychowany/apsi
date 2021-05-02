@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.Table;
 
 @Getter
 @Setter
@@ -14,6 +15,7 @@ import javax.persistence.Lob;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "database_files")
 public class DatabaseFile extends AbstractIdEntity {
 
     private String name;
