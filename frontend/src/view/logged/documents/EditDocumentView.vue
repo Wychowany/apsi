@@ -45,7 +45,7 @@
         <v-toolbar dark color="lighter">
           <v-toolbar-title>Załączniki</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn :disabled="false" @click="$refs.attachment.click()" color="light"
+          <v-btn :disabled="false" @click="$refs.attachment.click()" color="light" v-if="accessType === 'UPDATE'"
                  style="color: black" class="ma-5">Dodaj załącznik</v-btn>
         </v-toolbar>
         <v-alert type="info" class="ma-5" v-if="document.files.length === 0">
@@ -55,13 +55,14 @@
           <div v-for="(file, idx) in document.files" :key="'file-' + idx" class="mt-1">
             <strong class="mr-2">{{ idx + 1 }}.</strong> {{ file.name }}
             <v-icon small class="ml-4" color="blue" @click="downloadAttachment(file)">cloud_download</v-icon>
-            <v-icon small class="ml-4" color="red" @click="removeAttachment(idx)">delete</v-icon>
+            <v-icon small class="ml-4" color="red" v-if="accessType === 'UPDATE'" @click="removeAttachment(idx)">delete</v-icon>
           </div>
         </div>
       </v-flex>
     </v-layout>
 
-    <v-btn @click="saveDocumentDialog = true" color="primary" style="color: black" class="ma-5">Zapisz nową wersję</v-btn>
+    <v-btn @click="saveDocumentDialog = true" color="primary" style="color: black" class="ma-5"
+           v-if="accessType === 'UPDATE'">Zapisz nową wersję</v-btn>
     <v-btn @click="returnPage()" color="primary" style="color: black" class="ma-5 ml-1">Powrót</v-btn>
 
     <input type="file" ref="attachment" v-show="false" v-on:change="handleUpload">
@@ -93,6 +94,7 @@ export default {
         author: '',
         files: [],
       },
+      accessType: "",
       documentRoles: [],
       employees: [],
       versions: [],
@@ -131,6 +133,12 @@ export default {
     api.get(this, '/documents', {id: this.$route.params.id}, successResponse => {
       this.document = successResponse;
       this.documentLoaded = true;
+    }, errorResponse => {
+      console.log(errorResponse);
+    });
+
+    api.get(this, '/document-access/type', {id: this.$route.params.id}, successResponse => {
+      this.accessType = successResponse.data;
     }, errorResponse => {
       console.log(errorResponse);
     });

@@ -9,6 +9,8 @@ import com.apsi.modules.document.domain.DocumentUser;
 import com.apsi.modules.document.dto.*;
 import com.apsi.modules.document.query.DocumentDataRepository;
 import com.apsi.modules.document.query.DocumentRepository;
+import com.apsi.modules.documentAccess.domain.DocumentAccess;
+import com.apsi.modules.documentAccess.query.DocumentAccessRepository;
 import com.apsi.modules.documentRole.domain.DocumentRole;
 import com.apsi.modules.documentRole.query.DocumentRoleRepository;
 import com.apsi.modules.file.domain.DatabaseFile;
@@ -43,6 +45,9 @@ public class DocumentController {
     private final DocumentDataRepository documentDataRepository;
 
     @Autowired
+    private final DocumentAccessRepository documentAccessRepository;
+
+    @Autowired
     private final UserRepository userRepository;
 
     private static final Logger logger = LogManager.getLogger(DocumentController.class);
@@ -50,14 +55,25 @@ public class DocumentController {
     @GetMapping("/list")
     public ResponseEntity<?> getDocuments() {
         List<Document> documents = documentRepository.findAll();
-        List<DocumentDTO> response = documents.stream().map(DocumentDTO::new).collect(Collectors.toList());
+        List<DocumentAccess> accesses = documentAccessRepository.findAllByUserId(identity.getRawId());
+        List<DocumentDTO> response = documents.stream().map(document -> {
+            DocumentDTO documentDTO = new DocumentDTO(document);
+            documentDTO.setIsAuthor(document.getAuthor().getId().equals(identity.getRawId()));
+            accesses.stream().filter(
+                    a -> a.getDocument().getId().equals(document.getId())
+            ).findFirst().ifPresentOrElse(
+                    access -> documentDTO.setAccessType(access.getAccessType()),
+                    () -> documentDTO.setAccessType(null)
+            );
+            return documentDTO;
+        }).collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/my-list")
     public ResponseEntity<?> getMyDocuments() {
         List<Document> documents = documentRepository.findAllByAuthorId(identity.getRawId());
-        List<DocumentDTO> response = documents.stream().map(DocumentDTO::new).collect(Collectors.toList());
+        List<MyDocumentDTO> response = documents.stream().map(MyDocumentDTO::new).collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
 
