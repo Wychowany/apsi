@@ -9,8 +9,24 @@
 </template>
 
 <script>
+import {api} from "@/util/Api";
+
 export default {
   name: "SeriesView",
+
+  data() {
+    return {
+      series: [],
+    };
+  },
+
+  created() {
+    api.get(this, '/series/list', null,successResponse => {
+      this.series = successResponse;
+    }, errorResponse => {
+      console.log(errorResponse);
+    });
+  },
 
   methods: {
     createSeries() {
