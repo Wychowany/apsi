@@ -11,8 +11,8 @@
         :items-per-page="10"
         class="elevation-1">
       <template v-slot:item.actions="{ item }">
-        <v-icon small @click="editDocument(item)">edit</v-icon>
-        <v-icon small class="ml-3" @click="deleteDocument(item)">delete</v-icon>
+        <v-icon small @click="editDocument(item)" v-if="editAllowed(item)">edit</v-icon>
+        <v-icon small @click="editDocument(item)" v-else-if="readAllowed(item)">description</v-icon>
       </template>
     </v-data-table>
   </div>
@@ -52,14 +52,13 @@ export default {
       this.$router.push("/app/documents/edit/" + item.id);
     },
 
-    deleteDocument(item) {
-      api.delete(this, "/documents/", {id: item.id}, () => {
-            this.documents = this.documents.filter(d => d.id !== item.id);
-          },
-          errorResponse => {
-            console.log(errorResponse);
-          });
+    editAllowed(item) {
+      return item.isAuthor || item.accessType === 'UPDATE';
     },
+
+    readAllowed(item) {
+      return !item.isAuthor && item.accessType === 'READ';
+    }
   }
 }
 </script>
