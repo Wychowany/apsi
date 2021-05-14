@@ -4,7 +4,7 @@ import com.apsi.modules.series.domain.Series;
 import lombok.Data;
 
 @Data
-public class SeriesDTO {
+public class MySeriesDTO {
 
     private Long id;
 
@@ -12,7 +12,7 @@ public class SeriesDTO {
 
     private String author;
 
-    public SeriesDTO(Series series) {
+    public MySeriesDTO(Series series) {
         this.id = series.getId();
         this.name = series.getName();
         this.author = series.getAuthor().getFullName();
