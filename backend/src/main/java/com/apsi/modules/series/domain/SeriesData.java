@@ -21,6 +21,14 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class SeriesData extends AbstractIdEntity {
 
+    public SeriesData(Series series, String seriesVersion, User author) {
+        series.setSeriesDataList(new ArrayList<>());
+        series.getSeriesDataList().add(this);
+        this.series = series;
+        this.seriesVersion = seriesVersion;
+        this.author = author;
+    }
+
     private String seriesVersion;
 
     @ManyToOne(fetch = FetchType.LAZY)

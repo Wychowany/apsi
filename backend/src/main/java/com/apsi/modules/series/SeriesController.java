@@ -1,16 +1,27 @@
 package com.apsi.modules.series;
 
+import com.apsi.global.IdResponse;
 import com.apsi.global.Identity;
+import com.apsi.global.OkResponse;
+import com.apsi.modules.document.DocumentController;
+import com.apsi.modules.document.domain.Document;
+import com.apsi.modules.document.domain.DocumentData;
+import com.apsi.modules.document.dto.CreateDocumentDTO;
+import com.apsi.modules.file.domain.DatabaseFile;
 import com.apsi.modules.series.domain.Series;
+import com.apsi.modules.series.domain.SeriesData;
+import com.apsi.modules.series.dto.CreateSeriesDTO;
 import com.apsi.modules.series.dto.SeriesDTO;
 import com.apsi.modules.series.dto.MySeriesDTO;
 import com.apsi.modules.series.query.SeriesRepository;
+import com.apsi.modules.user.domain.User;
+import com.apsi.modules.user.query.UserRepository;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +37,11 @@ class SeriesController {
     @Autowired
     private final SeriesRepository seriesRepository;
 
+    @Autowired
+    private final UserRepository userRepository;
+
+    private static final Logger logger = LogManager.getLogger(DocumentController.class);
+
     @GetMapping("/list")
     public ResponseEntity<?> getSeries() {
         List<Series> series = seriesRepository.findAll();
@@ -38,5 +54,30 @@ class SeriesController {
         List<Series> series = seriesRepository.findAllByAuthorId(identity.getRawId());
         List<MySeriesDTO> response = series.stream().map(MySeriesDTO::new).collect(Collectors.toList());
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteSeries(@RequestParam Long id) {
+        logger.info("User with id {} requested series with id: {} removal", identity.getRawId(), id);
+        seriesRepository.deleteById(id);
+        return ResponseEntity.ok(new OkResponse());
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createSeries(@RequestBody CreateSeriesDTO createSeriesDTO) {
+        logger.info("User with id {} requested new series creation with data: {}", identity.getRawId(), createSeriesDTO.toString());
+        User author = userRepository.findById(identity.getRawId()).orElseThrow();
+        Series series = Series.builder()
+                .name(createSeriesDTO.getName())
+                .description(createSeriesDTO.getDescription())
+                .author(author)
+                .build();
+        series.setSeriesDataList(prepareNewSeriesDataList(series, createSeriesDTO, author));
+        Series savedSeries = seriesRepository.save(series);
+        return ResponseEntity.ok(new IdResponse(savedSeries.getId()));
+    }
+
+    private List<SeriesData> prepareNewSeriesDataList(Series series, CreateSeriesDTO createSeriesDTO, User author) {
+        return List.of(new SeriesData(series, createSeriesDTO.getSeriesVersion(), author));
     }
 }
