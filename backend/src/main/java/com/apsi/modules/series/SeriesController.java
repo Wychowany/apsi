@@ -6,13 +6,19 @@ import com.apsi.global.OkResponse;
 import com.apsi.modules.document.DocumentController;
 import com.apsi.modules.document.domain.Document;
 import com.apsi.modules.document.domain.DocumentData;
+import com.apsi.modules.document.domain.DocumentUser;
 import com.apsi.modules.document.dto.CreateDocumentDTO;
+import com.apsi.modules.document.dto.DocumentUserDTO;
+import com.apsi.modules.document.query.DocumentDataRepository;
+import com.apsi.modules.documentRole.domain.DocumentRole;
 import com.apsi.modules.file.domain.DatabaseFile;
 import com.apsi.modules.series.domain.Series;
 import com.apsi.modules.series.domain.SeriesData;
+import com.apsi.modules.series.domain.SeriesDocument;
 import com.apsi.modules.series.dto.CreateSeriesDTO;
 import com.apsi.modules.series.dto.SeriesDTO;
 import com.apsi.modules.series.dto.MySeriesDTO;
+import com.apsi.modules.series.dto.SeriesDocumentDTO;
 import com.apsi.modules.series.query.SeriesRepository;
 import com.apsi.modules.user.domain.User;
 import com.apsi.modules.user.query.UserRepository;
@@ -39,6 +45,9 @@ class SeriesController {
 
     @Autowired
     private final UserRepository userRepository;
+
+    @Autowired
+    private final DocumentDataRepository documentDataRepository;
 
     private static final Logger logger = LogManager.getLogger(DocumentController.class);
 
@@ -78,6 +87,20 @@ class SeriesController {
     }
 
     private List<SeriesData> prepareNewSeriesDataList(Series series, CreateSeriesDTO createSeriesDTO, User author) {
-        return List.of(new SeriesData(series, createSeriesDTO.getSeriesVersion(), author));
+        SeriesData seriesData = new SeriesData(series, createSeriesDTO.getSeriesVersion(), author);
+        seriesData.setDocumentsInSeries(prepareDocumentsInSeries(seriesData, createSeriesDTO.getDocuments()));
+
+        return List.of(seriesData);
+    }
+
+    private List<SeriesDocument> prepareDocumentsInSeries(SeriesData seriesData, List<SeriesDocumentDTO> documentsInSeries) {
+        return documentsInSeries.stream().map(documentDTO -> new SeriesDocument(
+                getDocumentDataFromDatabase(documentDTO.getDocumentDataId()),
+                seriesData
+        )).collect(Collectors.toList());
+    }
+
+    private DocumentData getDocumentDataFromDatabase(Long documentDataId) {
+        return documentDataRepository.findById(documentDataId).orElseThrow();
     }
 }

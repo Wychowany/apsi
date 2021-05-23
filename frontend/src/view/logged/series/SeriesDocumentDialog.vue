@@ -6,16 +6,19 @@
         <v-card-text>
           <v-form class="ma-5">
             <v-layout row>
-              <v-flex xs10>
+              <v-flex xs8>
                 <v-autocomplete label="Dokument" v-model="documentId" :items="accessibleDocuments"
                                 item-text="name" item-value="id" clearable
-                                outlined class="ml-5 mr-5"></v-autocomplete>
+                                outlined class="ml-5 mr-5" @change="getDocumentVersions"></v-autocomplete>
+              </v-flex>
+              <v-flex xs4>
+                <v-select background-color="white" :items="documentVersions" label="Wersja" outlined v-model="selectedDocumentVersion"/>
               </v-flex>
             </v-layout>
           </v-form>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn color="primary" style="color: black" :disabled="!documentId" @click="submit">Zatwierdź</v-btn>
+          <v-btn color="primary" style="color: black" :disabled="!documentId || !selectedDocumentVersion" @click="submit">Zatwierdź</v-btn>
           <v-btn color="primary" style="color: black" @click="dialog = false">Anuluj</v-btn>
         </v-card-actions>
       </v-card>
@@ -24,6 +27,8 @@
 </template>
 
 <script>
+import {api} from "@/util/Api";
+
 export default {
   name: "SeriesDocumentDialog",
 
@@ -31,6 +36,9 @@ export default {
     return {
       dialog: false,
       documentId: null,
+      documentVersions: [],
+      selectedDocumentVersion: null,
+      documentDataId: null
     };
   },
 
@@ -42,6 +50,8 @@ export default {
     dialog(val) {
       if (!val) {
         this.documentId = null;
+        this.selectedDocumentVersion = null;
+        this.documentVersions = [];
         this.$emit("close");
       }
     }
@@ -49,8 +59,25 @@ export default {
 
   methods: {
     submit() {
-      this.$emit("save", this.documentId);
-      this.dialog = false;
+      api.get(this, '/documents', {id: this.documentId, version: this.selectedDocumentVersion}, successResponse => {
+        this.$emit("save", successResponse.dataId, this.documentId, this.selectedDocumentVersion);
+        this.dialog = false;
+      }, errorResponse => {
+        console.log(errorResponse);
+      });
+    },
+
+    getDocumentVersions() {
+        if(this.documentId == null){
+          this.documentVersions = [];
+          this.selectedDocumentVersion = null;
+        }else{
+          api.get(this, '/documents/versions', {id: this.documentId}, successResponse => {
+            this.documentVersions = successResponse.map(item => item.version);
+          }, errorResponse => {
+            console.log(errorResponse);
+          });
+      }
     }
   },
 

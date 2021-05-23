@@ -1,6 +1,5 @@
 package com.apsi.modules.series.dto;
 
-import com.apsi.modules.document.dto.DocumentDTO;
 import lombok.Data;
 
 import java.util.List;
@@ -14,5 +13,5 @@ public class CreateSeriesDTO {
 
     private String seriesVersion;
 
-    private List<DocumentDTO> documents;
+    private List<SeriesDocumentDTO> documents;
 }

@@ -34,10 +34,11 @@
           Brak dodanych dokumentów.
         </v-alert>
         <div class="ma-5">
-          <div v-for="(file, idx) in series.documents" :key="'file-' + idx" class="mt-1">
-            <strong class="mr-2">{{ idx + 1 }}.</strong> {{ file.name }}
-<!--            <v-icon small class="ml-4" color="blue" @click="downloadAttachment(file)">cloud_download</v-icon>-->
-<!--            <v-icon small class="ml-4" color="red" @click="removeAttachment(idx)">delete</v-icon>-->
+          <div v-for="(document, idx) in series.documents" :key="'document-' + idx" class="mt-1">
+            <strong class="mr-2">{{ idx + 1 }}.</strong>
+            <span> {{ accessibleDocuments.find(d => d.id === document.documentId).name }} </span>
+            <span color="blue"> {{ ", wersja: " + document.version }} </span>
+            <v-icon small class="ml-4" color="red" @click="removeDocument(idx)">delete</v-icon>
           </div>
         </div>
       </v-flex>
@@ -50,7 +51,6 @@
 
     <SeriesDocumentDialog :show="seriesDocumentDialog" @close="seriesDocumentDialog = false"
                         :accessibleDocuments="accessibleDocuments" @save="addDocumentToSeries"/>
-
   </div>
 </template>
 
@@ -104,9 +104,13 @@ export default {
           });
     },
 
-    addDocumentToSeries(documentId) {
-      this.series.accessibleDocuments.push({ documentId });
+    addDocumentToSeries(documentDataId, documentId, version) {
+      this.series.documents.push({documentDataId, documentId, version});
       this.seriesDocumentDialog = false;
+    },
+
+    removeDocument(idx) {
+      this.series.documents.splice(idx, 1);
     },
 
     returnPage() {

@@ -38,4 +38,9 @@ public class SeriesData extends AbstractIdEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     private User author;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @OrderBy("creationDate")
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<SeriesDocument> documentsInSeries;
 }
