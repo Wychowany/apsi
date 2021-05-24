@@ -26,7 +26,6 @@ export default {
         {name: 'Administrator', value: 'ADMINISTRATOR'},
         {name: 'Pracownik', value: 'EMPLOYEE'},
         {name: 'Pracownik zewnętrzny', value: 'USER'},
-        {name: 'Klient', value: 'CLIENT'},
       ],
       user: {
         id: null,
