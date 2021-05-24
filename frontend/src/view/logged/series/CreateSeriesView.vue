@@ -37,7 +37,7 @@
           <div v-for="(document, idx) in series.documents" :key="'document-' + idx" class="mt-1">
             <strong class="mr-2">{{ idx + 1 }}.</strong>
             <span> {{ accessibleDocuments.find(d => d.id === document.documentId).name }} </span>
-            <span color="blue"> {{ ", wersja: " + document.version }} </span>
+            <span> {{ ", wersja: " + document.version }} </span>
             <v-icon small class="ml-4" color="red" @click="removeDocument(idx)">delete</v-icon>
           </div>
         </div>
@@ -94,7 +94,7 @@ export default {
     createSeries(navigateToEdition) {
       api.post(this, '/series', this.series, successResponse => {
             if (navigateToEdition) {
-              this.$router.push("/app/series/edit/", successResponse.id);
+              this.$router.push("/app/series/edit/" + successResponse.id);
             } else {
               this.$router.push("/app/series/own");
             }

@@ -38,4 +38,13 @@ public class Series extends AbstractIdEntity {
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "series")
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<SeriesData> seriesDataList = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinFormula("(" +
+            "SELECT s.id " +
+            "FROM series_data s " +
+            "WHERE s.series_id = id " +
+            "ORDER BY s.creation_date " +
+            "DESC LIMIT 1)")
+    private SeriesData seriesData;
 }

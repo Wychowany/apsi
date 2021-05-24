@@ -8,17 +8,17 @@ import com.apsi.modules.document.domain.Document;
 import com.apsi.modules.document.domain.DocumentData;
 import com.apsi.modules.document.domain.DocumentUser;
 import com.apsi.modules.document.dto.CreateDocumentDTO;
+import com.apsi.modules.document.dto.DocumentDataDTO;
 import com.apsi.modules.document.dto.DocumentUserDTO;
+import com.apsi.modules.document.dto.EditDocumentDTO;
 import com.apsi.modules.document.query.DocumentDataRepository;
 import com.apsi.modules.documentRole.domain.DocumentRole;
 import com.apsi.modules.file.domain.DatabaseFile;
 import com.apsi.modules.series.domain.Series;
 import com.apsi.modules.series.domain.SeriesData;
 import com.apsi.modules.series.domain.SeriesDocument;
-import com.apsi.modules.series.dto.CreateSeriesDTO;
-import com.apsi.modules.series.dto.SeriesDTO;
-import com.apsi.modules.series.dto.MySeriesDTO;
-import com.apsi.modules.series.dto.SeriesDocumentDTO;
+import com.apsi.modules.series.dto.*;
+import com.apsi.modules.series.query.SeriesDataRepository;
 import com.apsi.modules.series.query.SeriesRepository;
 import com.apsi.modules.user.domain.User;
 import com.apsi.modules.user.query.UserRepository;
@@ -30,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -49,6 +50,9 @@ class SeriesController {
     @Autowired
     private final DocumentDataRepository documentDataRepository;
 
+    @Autowired
+    private final SeriesDataRepository seriesDataRepository;
+
     private static final Logger logger = LogManager.getLogger(DocumentController.class);
 
     @GetMapping("/list")
@@ -63,6 +67,19 @@ class SeriesController {
         List<Series> series = seriesRepository.findAllByAuthorId(identity.getRawId());
         List<MySeriesDTO> response = series.stream().map(MySeriesDTO::new).collect(Collectors.toList());
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getSeries(@RequestParam Long id, @RequestParam(required = false) String version) {
+        Series series = seriesRepository.findById(id).orElseThrow();
+        SeriesData seriesData = version == null ? series.getSeriesData() : getSeriesVersionData(series, version);
+        SeriesDataDTO response = new SeriesDataDTO(seriesData);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/versions")
+    public ResponseEntity<?> getSeriesVersions(@RequestParam Long id) {
+        return ResponseEntity.ok(seriesDataRepository.findVersionsBySeriesId(id));
     }
 
     @DeleteMapping
@@ -86,6 +103,16 @@ class SeriesController {
         return ResponseEntity.ok(new IdResponse(savedSeries.getId()));
     }
 
+    @PutMapping
+    public ResponseEntity<?> editSeries(@RequestBody EditSeriesDTO editSeriesDTO) {
+        logger.info("User with id {} created new series version with data: {}", identity.getRawId(), editSeriesDTO.toString());
+        Series series = seriesRepository.findById(editSeriesDTO.getId()).orElseThrow();
+        User author = userRepository.findById(identity.getRawId()).orElseThrow();
+        series.getSeriesDataList().add(prepareSeriesDataListExtension(series, editSeriesDTO, author));
+        seriesRepository.save(series);
+        return ResponseEntity.ok(new OkResponse());
+    }
+
     private List<SeriesData> prepareNewSeriesDataList(Series series, CreateSeriesDTO createSeriesDTO, User author) {
         SeriesData seriesData = new SeriesData(series, createSeriesDTO.getSeriesVersion(), author);
         seriesData.setDocumentsInSeries(prepareDocumentsInSeries(seriesData, createSeriesDTO.getDocuments()));
@@ -93,7 +120,7 @@ class SeriesController {
         return List.of(seriesData);
     }
 
-    private List<SeriesDocument> prepareDocumentsInSeries(SeriesData seriesData, List<SeriesDocumentDTO> documentsInSeries) {
+    private List<SeriesDocument> prepareDocumentsInSeries(SeriesData seriesData, List<CreateSeriesDocumentDTO> documentsInSeries) {
         return documentsInSeries.stream().map(documentDTO -> new SeriesDocument(
                 getDocumentDataFromDatabase(documentDTO.getDocumentDataId()),
                 seriesData
@@ -102,5 +129,17 @@ class SeriesController {
 
     private DocumentData getDocumentDataFromDatabase(Long documentDataId) {
         return documentDataRepository.findById(documentDataId).orElseThrow();
+    }
+
+    private SeriesData getSeriesVersionData(Series series, String version) {
+        Optional<SeriesData> seriesData = series.getSeriesDataList().stream().filter(s -> s.getSeriesVersion().equals(version)).findFirst();
+        return seriesData.orElseGet(series::getSeriesData);
+    }
+
+    private SeriesData prepareSeriesDataListExtension(Series series, EditSeriesDTO editSeriesDTO, User author) {
+        SeriesData seriesData = new SeriesData(series, editSeriesDTO.getSeriesVersion(), author);
+        seriesData.setDocumentsInSeries(prepareDocumentsInSeries(seriesData, editSeriesDTO.getDocuments()));
+
+        return seriesData;
     }
 }

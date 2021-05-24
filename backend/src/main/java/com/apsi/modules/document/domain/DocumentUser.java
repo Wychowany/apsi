@@ -1,7 +1,6 @@
 package com.apsi.modules.document.domain;
 
 import com.apsi.generic.AbstractIdEntity;
-import com.apsi.modules.document.dto.DocumentUserDTO;
 import com.apsi.modules.documentRole.domain.DocumentRole;
 import com.apsi.modules.user.domain.User;
 import lombok.*;

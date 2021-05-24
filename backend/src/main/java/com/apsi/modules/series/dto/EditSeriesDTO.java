@@ -5,11 +5,9 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CreateSeriesDTO {
+public class EditSeriesDTO {
 
-    private String name;
-
-    private String description;
+    private Long id;
 
     private String seriesVersion;
 

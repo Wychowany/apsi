@@ -1,11 +1,7 @@
 package com.apsi.modules.series.domain;
 
 import com.apsi.generic.AbstractIdEntity;
-import com.apsi.modules.document.domain.Document;
 import com.apsi.modules.document.domain.DocumentData;
-import com.apsi.modules.document.dto.DocumentUserDTO;
-import com.apsi.modules.documentRole.domain.DocumentRole;
-import com.apsi.modules.user.domain.User;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;

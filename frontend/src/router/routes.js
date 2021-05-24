@@ -18,6 +18,7 @@ import EditDocumentView from "@/view/logged/documents/EditDocumentView";
 import MyDocumentsView from "@/view/logged/documents/MyDocumentsView";
 import SeriesTemplate from "@/view/logged/series/SeriesTemplate";
 import CreateSeriesView from "@/view/logged/series/CreateSeriesView";
+import EditSeriesView from "@/view/logged/series/EditSeriesView";
 import DocumentAccessView from "@/view/logged/documents/DocumentAccessView";
 import DocumentRolesView from "@/view/logged/documentRoles/DocumentRolesView";
 Vue.use(VueRouter);
@@ -66,6 +67,9 @@ const routes = [
 					{
 						path: "create", component: CreateSeriesView,
 					},
+					{
+						path: "edit/:id", component: EditSeriesView,
+					}
 				]
 			},
 			{

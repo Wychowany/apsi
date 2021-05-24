@@ -12,7 +12,9 @@
                                 outlined class="ml-5 mr-5" @change="getDocumentVersions"></v-autocomplete>
               </v-flex>
               <v-flex xs4>
-                <v-select background-color="white" :items="documentVersions" label="Wersja" outlined v-model="selectedDocumentVersion"/>
+                <v-autocomplete label="Wersja" v-model="selectedDocumentVersion" :items="documentVersions"
+                                item-value="id" clearable
+                                outlined class="ml-5 mr-5"></v-autocomplete>
               </v-flex>
             </v-layout>
           </v-form>

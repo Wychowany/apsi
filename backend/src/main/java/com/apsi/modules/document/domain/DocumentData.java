@@ -35,7 +35,7 @@ public class DocumentData extends AbstractIdEntity {
     @Column(length = 64, nullable = false, columnDefinition = "VARCHAR(64) DEFAULT 'NEW'")
     private DocumentStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "document_id")
     private Document document;
 
