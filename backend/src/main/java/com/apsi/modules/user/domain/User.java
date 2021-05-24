@@ -80,6 +80,6 @@ public class User extends AbstractIdEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return accepted;
+        return accepted && !deleted;
     }
 }

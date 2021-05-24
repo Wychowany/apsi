@@ -107,7 +107,9 @@ class UserController {
     @DeleteMapping
     public ResponseEntity<?> deleteUser(@RequestParam Long id) {
         logger.info("User with id {} requested user with id: {} removal", identity.getRawId(), id);
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id).orElseThrow();
+        user.setDeleted(true);
+        userRepository.save(user);
         return ResponseEntity.ok(new OkResponse());
     }
 }
