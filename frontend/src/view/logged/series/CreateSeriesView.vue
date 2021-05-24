@@ -23,7 +23,7 @@
       </v-layout>
     </v-form>
     <v-layout>
-      <v-flex xs6 ml-4 mr-4>
+      <v-flex xs12 ml-4 mr-4>
         <v-toolbar dark color="lighter">
           <v-toolbar-title>Dokumenty</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -34,10 +34,9 @@
           Brak dodanych dokumentów.
         </v-alert>
         <div class="ma-5">
-          <div v-for="(document, idx) in series.documents" :key="'document-' + idx" class="mt-1">
+          <div v-for="(document, idx) in series.documents" :key="'document-' + idx" class="mt-1 ml-5">
             <strong class="mr-2">{{ idx + 1 }}.</strong>
-            <span> {{ accessibleDocuments.find(d => d.id === document.documentId).name }} </span>
-            <span> {{ ", wersja: " + document.version }} </span>
+            <span> {{ accessibleDocuments.find(d => d.id === document.documentId).name + ", wersja: " + document.version }} </span>
             <v-icon small class="ml-4" color="red" @click="removeDocument(idx)">delete</v-icon>
           </div>
         </div>
