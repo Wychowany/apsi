@@ -3,7 +3,6 @@ package com.apsi.modules.document.dto;
 import com.apsi.modules.document.domain.DocumentData;
 import com.apsi.modules.document.domain.DocumentStatus;
 import com.apsi.modules.file.dto.FileDTO;
-import com.apsi.modules.user.domain.User;
 import lombok.Data;
 
 import java.util.List;

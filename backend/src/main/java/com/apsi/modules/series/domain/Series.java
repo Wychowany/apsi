@@ -1,8 +1,6 @@
 package com.apsi.modules.series.domain;
 
 import com.apsi.generic.AbstractIdEntity;
-import com.apsi.modules.document.domain.DocumentData;
-import com.apsi.modules.document.domain.DocumentUser;
 import com.apsi.modules.user.domain.User;
 import lombok.*;
 import org.hibernate.annotations.JoinFormula;

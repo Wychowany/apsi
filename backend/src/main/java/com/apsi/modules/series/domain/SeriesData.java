@@ -1,9 +1,6 @@
 package com.apsi.modules.series.domain;
 
 import com.apsi.generic.AbstractIdEntity;
-import com.apsi.modules.document.domain.Document;
-import com.apsi.modules.document.domain.DocumentStatus;
-import com.apsi.modules.file.domain.DatabaseFile;
 import com.apsi.modules.user.domain.User;
 import lombok.*;
 import org.hibernate.annotations.LazyCollection;
