@@ -7,6 +7,7 @@ import ForbiddenView from "@/view/ForbiddenView";
 import NotFoundView from "@/view/NotFoundView";
 import DocumentsView from "@/view/logged/documents/DocumentsView";
 import SeriesView from "@/view/logged/series/SeriesView";
+import MySeriesView from "@/view/logged/series/MySeriesView";
 import UsersView from "@/view/logged/users/UsersView";
 import CreateUserView from "@/view/logged/users/CreateUserView";
 import UsersTemplate from "@/view/logged/users/UsersTemplate";
@@ -16,6 +17,8 @@ import CreateDocumentView from "@/view/logged/documents/CreateDocumentView";
 import EditDocumentView from "@/view/logged/documents/EditDocumentView";
 import MyDocumentsView from "@/view/logged/documents/MyDocumentsView";
 import SeriesTemplate from "@/view/logged/series/SeriesTemplate";
+import CreateSeriesView from "@/view/logged/series/CreateSeriesView";
+import EditSeriesView from "@/view/logged/series/EditSeriesView";
 import DocumentAccessView from "@/view/logged/documents/DocumentAccessView";
 import DocumentRolesView from "@/view/logged/documentRoles/DocumentRolesView";
 Vue.use(VueRouter);
@@ -59,8 +62,14 @@ const routes = [
 						path: "/", component: SeriesView,
 					},
 					{
-						path: "own", component: SeriesView,
+						path: "own", component: MySeriesView,
 					},
+					{
+						path: "create", component: CreateSeriesView,
+					},
+					{
+						path: "edit/:id", component: EditSeriesView,
+					}
 				]
 			},
 			{

@@ -3,7 +3,6 @@ package com.apsi.modules.document.dto;
 import com.apsi.modules.document.domain.DocumentData;
 import com.apsi.modules.document.domain.DocumentStatus;
 import com.apsi.modules.file.dto.FileDTO;
-import com.apsi.modules.user.domain.User;
 import lombok.Data;
 
 import java.util.List;
@@ -20,6 +19,8 @@ public class DocumentDataDTO {
 
     private String creator;
 
+    private long dataId;
+
     private String documentVersion;
 
     private DocumentStatus status;
@@ -35,6 +36,7 @@ public class DocumentDataDTO {
         this.name = documentData.getDocument().getName();
         this.description = documentData.getDocument().getDescription();
         this.creator = documentData.getDocument().getAuthor().getFullName();
+        this.dataId = documentData.getId();
         this.documentVersion = documentData.getDocumentVersion();
         this.status = documentData.getStatus();
         this.author = documentData.getAuthor().getFullName();
