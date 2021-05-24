@@ -59,7 +59,7 @@ export default {
   },
 
   created() {
-    api.get(this, '/users/employees', null, successResponse => {
+    api.get(this, '/users/names', null, successResponse => {
       this.users = successResponse;
       this.usersLoaded = true;
     }, errorResponse => {

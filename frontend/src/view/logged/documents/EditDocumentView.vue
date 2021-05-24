@@ -96,18 +96,16 @@ export default {
       },
       accessType: "",
       documentRoles: [],
-      employees: [],
       versions: [],
       versionsLoaded: false,
       documentLoaded: false,
-      employeesLoaded: false,
       saveDocumentDialog: false,
     };
   },
 
   computed: {
     dataLoaded() {
-      return this.versionsLoaded && this.documentLoaded && this.employeesLoaded;
+      return this.versionsLoaded && this.documentLoaded;
     }
   },
 
@@ -145,13 +143,6 @@ export default {
 
     api.get(this, '/document-roles/list', null,successResponse => {
       this.documentRoles = successResponse;
-    }, errorResponse => {
-      console.log(errorResponse);
-    });
-
-    api.get(this, '/users/employees', null, successResponse => {
-      this.employees = successResponse;
-      this.employeesLoaded = true;
     }, errorResponse => {
       console.log(errorResponse);
     });
