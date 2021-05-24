@@ -5,14 +5,14 @@
         <v-toolbar color="primary" dark style="color: black">Dodawanie dokumentu do zbioru</v-toolbar>
         <v-card-text>
           <v-form class="ma-5">
-            <v-layout row>
+            <v-layout row mt-3>
               <v-flex xs8>
                 <v-autocomplete label="Dokument" v-model="documentId" :items="accessibleDocuments"
                                 item-text="name" item-value="id" clearable
                                 outlined class="ml-5 mr-5" @change="getDocumentVersions"></v-autocomplete>
               </v-flex>
               <v-flex xs4>
-                <v-autocomplete label="Wersja" v-model="selectedDocumentVersion" :items="documentVersions"
+                <v-autocomplete label="Wersja" v-model="selectedDocumentVersion" :items="availableVersions"
                                 item-value="id" clearable
                                 outlined class="ml-5 mr-5"></v-autocomplete>
               </v-flex>
@@ -70,10 +70,10 @@ export default {
     },
 
     getDocumentVersions() {
-        if(this.documentId == null){
+        if (this.documentId == null) {
           this.documentVersions = [];
           this.selectedDocumentVersion = null;
-        }else{
+        } else {
           api.get(this, '/documents/versions', {id: this.documentId}, successResponse => {
             this.documentVersions = successResponse.map(item => item.version);
           }, errorResponse => {
@@ -83,9 +83,22 @@ export default {
     }
   },
 
+  computed: {
+    availableVersions() {
+      console.log(this.selectedDocuments);
+      let chosen = this.selectedDocuments.filter(d => d.documentId === this.documentId);
+      if (chosen) {
+        return this.documentVersions.filter(dv => !chosen.map(c => c.version).includes(dv));
+      } else {
+        return this.documentVersions;
+      }
+    }
+  },
+
   props: {
     show: {type: Boolean, default: false},
     accessibleDocuments: {type: Array},
+    selectedDocuments: {type: Array}
   }
 }
 </script>

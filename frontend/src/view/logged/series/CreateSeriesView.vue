@@ -50,7 +50,8 @@
     </div>
 
     <SeriesDocumentDialog :show="seriesDocumentDialog" @close="seriesDocumentDialog = false"
-                        :accessibleDocuments="accessibleDocuments" @save="addDocumentToSeries"/>
+                        :accessibleDocuments="accessibleDocuments" @save="addDocumentToSeries"
+                        :selectedDocuments="series.documents"/>
   </div>
 </template>
 

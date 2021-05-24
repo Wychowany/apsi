@@ -55,7 +55,8 @@
                     @close="saveSeriesDialog = false" @save="saveSeries"/>
 
     <SeriesDocumentDialog :show="seriesDocumentDialog" @close="seriesDocumentDialog = false"
-                          :accessibleDocuments="accessibleDocuments" @save="addDocumentToSeries"/>
+                          :accessibleDocuments="accessibleDocuments" @save="addDocumentToSeries"
+                          :selectedDocuments="series.seriesDocuments"/>
   </div>
 </template>
 
