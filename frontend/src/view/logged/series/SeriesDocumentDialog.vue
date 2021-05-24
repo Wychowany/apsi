@@ -85,7 +85,6 @@ export default {
 
   computed: {
     availableVersions() {
-      console.log(this.selectedDocuments);
       let chosen = this.selectedDocuments.filter(d => d.documentId === this.documentId);
       if (chosen) {
         return this.documentVersions.filter(dv => !chosen.map(c => c.version).includes(dv));
