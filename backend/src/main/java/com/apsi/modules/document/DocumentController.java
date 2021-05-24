@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -110,8 +111,10 @@ public class DocumentController {
     }
 
     @DeleteMapping
+    @Transactional
     public ResponseEntity<?> deleteDocument(@RequestParam Long id) {
         logger.info("User with id {} requested document with id: {} removal", identity.getRawId(), id);
+        documentAccessRepository.deleteByDocumentId(id);
         documentRepository.deleteById(id);
         return ResponseEntity.ok(new OkResponse());
     }

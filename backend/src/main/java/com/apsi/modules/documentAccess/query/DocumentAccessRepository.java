@@ -12,6 +12,8 @@ public interface DocumentAccessRepository extends JpaRepository<DocumentAccess, 
 
     List<DocumentAccess> findAllByUserIdAndDocumentAuthorIdIsNot(long userId, long authorId);
 
+    void deleteByDocumentId(Long id);
+
     void deleteByUserIdAndDocumentId(Long userId, Long documentId);
 
     Optional<DocumentAccess> findByDocumentIdAndUserId(Long documentId, Long userId);
