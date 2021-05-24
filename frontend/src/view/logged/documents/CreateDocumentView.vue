@@ -25,13 +25,13 @@
     <v-layout>
       <v-flex xs6 ml-4 mr-4>
         <v-toolbar dark color="lighter">
-          <v-toolbar-title>Użytkownicy</v-toolbar-title>
+          <v-toolbar-title>Osoby funkcyjne</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn @click="documentUserDialog = true" color="light"
-                 style="color: black" class="ma-5">Dodaj użytkownika</v-btn>
+                 style="color: black" class="ma-5">Dodaj osobę</v-btn>
         </v-toolbar>
         <v-alert type="info" class="ma-5" v-if="document.documentUsers.length === 0">
-          Brak dodanych użytkowników.
+          Brak dodanych osób.
         </v-alert>
         <div class="ma-5">
           <div v-for="(user, idx) in document.documentUsers" :key="'user-' + idx" class="mt-1">

@@ -2,7 +2,7 @@
   <v-dialog transition="dialog-top-transition" max-width="600" v-if="show" v-model="dialog">
     <template>
       <v-card>
-        <v-toolbar color="primary" dark style="color: black">Dodawanie użytkownika dokumentu</v-toolbar>
+        <v-toolbar color="primary" dark style="color: black">Dodawanie osoby funkcyjnej</v-toolbar>
         <v-card-text>
           <v-form class="ma-5">
             <v-layout row>
