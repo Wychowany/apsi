@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/documents")
@@ -54,20 +55,13 @@ public class DocumentController {
 
     @GetMapping("/list")
     public ResponseEntity<?> getDocuments() {
-        List<Document> documents = documentRepository.findAll();
-        List<DocumentAccess> accesses = documentAccessRepository.findAllByUserId(identity.getRawId());
-        List<DocumentDTO> response = documents.stream().map(document -> {
-            DocumentDTO documentDTO = new DocumentDTO(document);
-            documentDTO.setIsAuthor(document.getAuthor().getId().equals(identity.getRawId()));
-            accesses.stream().filter(
-                    a -> a.getDocument().getId().equals(document.getId())
-            ).findFirst().ifPresentOrElse(
-                    access -> documentDTO.setAccessType(access.getAccessType()),
-                    () -> documentDTO.setAccessType(null)
-            );
-            return documentDTO;
-        }).collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+        List<Document> documents = documentRepository.findAllByAuthorId(identity.getRawId());
+        List<DocumentAccess> accesses = documentAccessRepository.findAllByUserIdAndDocumentAuthorIdIsNot(identity.getRawId(), identity.getRawId());
+        return ResponseEntity.ok(
+                    Stream.concat(
+                        documents.stream().map(document -> new DocumentDTO(document, true)),
+                        accesses.stream().map(access -> new DocumentDTO(access, false))
+                ).collect(Collectors.toList()));
     }
 
     @GetMapping("/my-list")
