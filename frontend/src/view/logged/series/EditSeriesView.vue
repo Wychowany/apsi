@@ -41,6 +41,7 @@
           <div v-for="(document, idx) in series.seriesDocuments" :key="'document-' + idx" class="mt-1 ml-5">
             <strong class="mr-2">{{ idx + 1 }}.</strong>
             <span> {{ accessibleDocuments.find(d => d.id === document.documentId).name + ", wersja: " + document.version }} </span>
+            <v-icon small class="ml-4" color="blue" @click="openDocument(document)">description</v-icon>
             <v-icon small class="ml-4" color="red" @click="removeDocument(idx)">delete</v-icon>
           </div>
         </div>
@@ -152,6 +153,11 @@ export default {
     addDocumentToSeries(documentDataId, documentId, version) {
       this.series.seriesDocuments.push({documentDataId, documentId, version});
       this.seriesDocumentDialog = false;
+    },
+
+    openDocument(document) {
+      let routeData = this.$router.resolve("/app/documents/edit/" + document.documentId);
+      window.open(routeData.href, '_blank');
     },
 
     removeDocument(idx) {
