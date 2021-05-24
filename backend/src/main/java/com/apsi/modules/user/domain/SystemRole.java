@@ -4,8 +4,7 @@ public enum SystemRole {
 
 	ADMINISTRATOR ("Administrator"),
 	EMPLOYEE ("Pracownik"),
-	USER ("Pracownik zewnętrzny"),
-	CLIENT ("Klient");
+	USER ("Pracownik zewnętrzny");
 
 	private final String name;
 

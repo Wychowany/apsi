@@ -3,7 +3,6 @@ package com.apsi.modules.user;
 import com.apsi.global.ErrorResponse;
 import com.apsi.global.Identity;
 import com.apsi.global.OkResponse;
-import com.apsi.modules.user.domain.SystemRole;
 import com.apsi.modules.user.domain.User;
 import com.apsi.modules.user.dto.CreateUserDTO;
 import com.apsi.modules.user.dto.EditUserDTO;
@@ -52,9 +51,9 @@ class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/employees")
-    public ResponseEntity<?> getEmployees() {
-        List<User> users = userRepository.findAllByDeletedIsFalseAndSystemRoleIsIn(List.of(SystemRole.ADMINISTRATOR, SystemRole.EMPLOYEE));
+    @GetMapping("/names")
+    public ResponseEntity<?> getUserNames() {
+        List<User> users = userRepository.findAllByDeletedIsFalse();
         List<UserNameDTO> response = users.stream().map(UserNameDTO::new).collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
@@ -108,7 +107,9 @@ class UserController {
     @DeleteMapping
     public ResponseEntity<?> deleteUser(@RequestParam Long id) {
         logger.info("User with id {} requested user with id: {} removal", identity.getRawId(), id);
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id).orElseThrow();
+        user.setDeleted(true);
+        userRepository.save(user);
         return ResponseEntity.ok(new OkResponse());
     }
 }

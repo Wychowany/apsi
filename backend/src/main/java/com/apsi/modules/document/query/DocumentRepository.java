@@ -8,4 +8,6 @@ import java.util.List;
 public interface DocumentRepository extends AbstractEntityRepository<Document, Long> {
 
     List<Document> findAllByAuthorId(Long authorId);
+
+    boolean existsByIdAndAuthorId(Long id, Long authorId);
 }

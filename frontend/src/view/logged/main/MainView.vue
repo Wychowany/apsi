@@ -57,7 +57,6 @@ export default {
         { title: 'Moje dokumenty', address: '/app/documents/own', icon: 'description' },
         { title: 'Zbiory', address: '/app/series', icon: 'folder_open' },
         { title: 'Moje zbiory', address: '/app/series/own', icon: 'folder_open' },
-        { title: 'Użytkownicy', address: '/app/users', icon: 'person' },
         { title: 'Role w dokumentach', address: '/app/document-roles', icon: 'portrait' }
       ],
     }
@@ -66,12 +65,21 @@ export default {
   created() {
     api.get(this, '/users/logged', null, successResponse => {
       this.user = successResponse;
+      if (this.adminLogged()) {
+        this.links.push(
+            { title: 'Użytkownicy', address: '/app/users', icon: 'person' }
+        )
+      }
     }, errorResponse => {
       console.log(errorResponse);
     });
   },
 
   methods: {
+    adminLogged() {
+      return this.user.systemRole === "Administrator";
+    },
+
     logout() {
       auth.logout(this);
     },

@@ -29,10 +29,10 @@
     <v-layout>
       <v-flex xs6 ml-4 mr-4>
         <v-toolbar dark color="lighter">
-          <v-toolbar-title>Użytkownicy</v-toolbar-title>
+          <v-toolbar-title>Osoby funkcyjne</v-toolbar-title>
         </v-toolbar>
         <v-alert type="info" class="ma-5" v-if="document.documentUsers.length === 0">
-          Brak dodanych użytkowników.
+          Brak dodanych osób.
         </v-alert>
         <div class="ma-5">
           <div v-for="(user, idx) in document.documentUsers" :key="'user-' + idx" class="mt-1">
@@ -96,18 +96,16 @@ export default {
       },
       accessType: "",
       documentRoles: [],
-      employees: [],
       versions: [],
       versionsLoaded: false,
       documentLoaded: false,
-      employeesLoaded: false,
       saveDocumentDialog: false,
     };
   },
 
   computed: {
     dataLoaded() {
-      return this.versionsLoaded && this.documentLoaded && this.employeesLoaded;
+      return this.versionsLoaded && this.documentLoaded;
     }
   },
 
@@ -145,13 +143,6 @@ export default {
 
     api.get(this, '/document-roles/list', null,successResponse => {
       this.documentRoles = successResponse;
-    }, errorResponse => {
-      console.log(errorResponse);
-    });
-
-    api.get(this, '/users/employees', null, successResponse => {
-      this.employees = successResponse;
-      this.employeesLoaded = true;
     }, errorResponse => {
       console.log(errorResponse);
     });

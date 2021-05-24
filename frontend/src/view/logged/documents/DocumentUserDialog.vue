@@ -2,7 +2,7 @@
   <v-dialog transition="dialog-top-transition" max-width="600" v-if="show" v-model="dialog">
     <template>
       <v-card>
-        <v-toolbar color="primary" dark style="color: black">Dodawanie użytkownika dokumentu</v-toolbar>
+        <v-toolbar color="primary" dark style="color: black">Dodawanie osoby funkcyjnej</v-toolbar>
         <v-card-text>
           <v-form class="ma-5">
             <v-layout row>
@@ -14,7 +14,7 @@
             </v-layout>
             <v-layout row>
               <v-flex xs10>
-                <v-autocomplete label="Użytkownik" v-model="userId" :items="employees"
+                <v-autocomplete label="Użytkownik" v-model="userId" :items="users"
                                 item-text="fullName" item-value="id" clearable
                                 outlined class="ml-5 mr-5"></v-autocomplete>
               </v-flex>
@@ -66,7 +66,7 @@ export default {
   props: {
     show: {type: Boolean, default: false},
     documentRoles: {type: Array},
-    employees: {type: Array},
+    users: {type: Array},
   }
 }
 </script>
