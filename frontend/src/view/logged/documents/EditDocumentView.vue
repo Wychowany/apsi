@@ -19,6 +19,9 @@
           <div class="ma-2">
             <strong class="mr-2">Opis:</strong> {{ document.description }}
           </div>
+          <div class="ma-2">
+           <strong class="mr-2">Data utworzenia wersji:</strong> {{ document.creationDate }}
+          </div>
         </v-form>
       </v-flex>
       <v-flex xs2 mt-5 mr-5>
@@ -93,6 +96,7 @@ export default {
         status: '',
         author: '',
         files: [],
+        creationDate: '',
       },
       accessType: "",
       documentRoles: [],

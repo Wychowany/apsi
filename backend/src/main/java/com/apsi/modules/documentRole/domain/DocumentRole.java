@@ -3,10 +3,7 @@ package com.apsi.modules.documentRole.domain;
 import com.apsi.generic.AbstractIdEntity;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -19,4 +16,8 @@ import javax.persistence.Table;
 public class DocumentRole extends AbstractIdEntity {
 
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 64, nullable = false, columnDefinition = "VARCHAR(64) DEFAULT 'READ'")
+    private DocumentRoleAccessType accesstype;
 }

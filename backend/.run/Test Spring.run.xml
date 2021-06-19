@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test Spring" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="Backend" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.apsi.BackendApplication" />
+    <option name="DEBUG_MODE" value="true" />
+    <option name="ENABLE_JMX_AGENT" value="false" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="ALTERNATIVE_JRE_PATH" value="11.0.4" />
+    <option name="SHORTEN_COMMAND_LINE" value="MANIFEST" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

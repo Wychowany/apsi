@@ -5,6 +5,7 @@ import com.apsi.modules.document.domain.DocumentStatus;
 import com.apsi.modules.file.dto.FileDTO;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,8 @@ public class DocumentDataDTO {
 
     private List<FileDTO> files;
 
+    private LocalDateTime creationDate;
+
     public DocumentDataDTO(DocumentData documentData) {
         this.id = documentData.getDocument().getId();
         this.name = documentData.getDocument().getName();
@@ -42,5 +45,6 @@ public class DocumentDataDTO {
         this.author = documentData.getAuthor().getFullName();
         this.documentUsers = documentData.getDocument().getDocumentUsers().stream().map(DocumentUserNameDTO::new).collect(Collectors.toList());
         this.files = documentData.getFiles().stream().map(FileDTO::new).collect(Collectors.toList());
+        this.creationDate =documentData.getCreationDate();
     }
 }

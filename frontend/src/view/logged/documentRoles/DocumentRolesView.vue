@@ -17,7 +17,7 @@
     </v-data-table>
 
     <EditTextDialog :header="'Dodawanie roli w dokumentach'" :show="createDocumentRoleDialog"
-                    :label="'Nazwa roli'" @close="createDocumentRoleDialog = false" @save="saveDocumentRole"/>
+                    :label="'Nazwa roli'" @close="createDocumentRoleDialog = false" @save="saveDocumentRole2"/>
 
     <EditTextDialog :header="'Edycja roli w dokumentach'" :show="editDocumentRoleDialog"
                     :label="'Nazwa roli'" @close="editDocumentRoleDialog = false" @save="saveDocumentRole"
@@ -43,6 +43,7 @@ export default {
       createDocumentRoleDialog: false,
       editDocumentRoleDialog: false,
       editedRole: null,
+      editedAccess: null
     }
   },
 
@@ -73,6 +74,13 @@ export default {
         this.createDocumentRole(name);
       }
     },
+    saveDocumentRole2(name,accessType) {
+          if (this.editedRole) {
+            this.editDocumentRole(name);
+          } else {
+            this.createDocumentRole(name, accessType);
+          }
+        },
 
     editDocumentRole(name) {
       let edited = this.documentRoles.find(role => role.id === this.editedRole.id);
@@ -85,12 +93,13 @@ export default {
         });
     },
 
-    createDocumentRole(name) {
-      api.post(this, '/document-roles', {name: name}, successResponse => {
+    createDocumentRole(name,accessType) {
+      api.post(this, '/document-roles', {name: name + accessType, accesstype: accessType}, successResponse => {
             this.createDocumentRoleDialog = false;
             this.documentRoles.push({
               id: successResponse.id,
-              name: name
+              name: name,
+              AccessType:accessType
             });
           },
           errorResponse => {

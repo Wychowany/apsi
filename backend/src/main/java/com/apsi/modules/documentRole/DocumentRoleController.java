@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,9 +42,12 @@ public class DocumentRoleController {
     @PostMapping
     public ResponseEntity<?> createDocumentRole(@RequestBody CreateDocumentRoleDTO createDocumentRoleDTO) {
         logger.info("User with id {} requested new document role creation with data: {}", identity.getRawId(), createDocumentRoleDTO.toString());
+
         DocumentRole documentRole = DocumentRole.builder()
                 .name(createDocumentRoleDTO.getName())
+                .accesstype(createDocumentRoleDTO.getAccesstype())
                 .build();
+
         DocumentRole savedDocumentRole = documentRoleRepository.save(documentRole);
         return ResponseEntity.ok(new IdResponse(savedDocumentRole.getId()));
     }
