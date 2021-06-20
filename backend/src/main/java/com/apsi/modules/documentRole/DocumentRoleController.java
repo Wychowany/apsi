@@ -15,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
+import java.lang.System.*;
 
 @RestController
 @RequestMapping("/document-roles")
@@ -34,16 +36,28 @@ public class DocumentRoleController {
     @GetMapping("/list")
     public ResponseEntity<?> getDocumentRoles() {
         List<DocumentRole> documentRoles = documentRoleRepository.findAll();
+        for (int i =0;i<documentRoles.size();i++){
+            System.out.println(((DocumentRole)documentRoles.get(i)).getAccesstype());
+                 }
+
         List<DocumentRoleDTO> response = documentRoles.stream().map(DocumentRoleDTO::new).collect(Collectors.toList());
+        for (int i =0;i<response.size();i++){
+            System.out.println(((DocumentRoleDTO)response.get(i)).getAccesstype());
+        }
+
+
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
     public ResponseEntity<?> createDocumentRole(@RequestBody CreateDocumentRoleDTO createDocumentRoleDTO) {
         logger.info("User with id {} requested new document role creation with data: {}", identity.getRawId(), createDocumentRoleDTO.toString());
+
         DocumentRole documentRole = DocumentRole.builder()
                 .name(createDocumentRoleDTO.getName())
+                .accesstype(createDocumentRoleDTO.getAccesstype())
                 .build();
+
         DocumentRole savedDocumentRole = documentRoleRepository.save(documentRole);
         return ResponseEntity.ok(new IdResponse(savedDocumentRole.getId()));
     }
@@ -53,6 +67,7 @@ public class DocumentRoleController {
         logger.info("User with id {} requested document role edition with data: {}", identity.getRawId(), editDocumentRoleDTO.toString());
         DocumentRole documentRole = documentRoleRepository.findById(editDocumentRoleDTO.getId()).orElseThrow();
         documentRole.setName(editDocumentRoleDTO.getName());
+        documentRole.setAccesstype(editDocumentRoleDTO.getAccesstype());
         documentRoleRepository.save(documentRole);
         return ResponseEntity.ok(new OkResponse());
     }

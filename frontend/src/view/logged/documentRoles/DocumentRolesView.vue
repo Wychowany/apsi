@@ -17,11 +17,11 @@
     </v-data-table>
 
     <EditTextDialog :header="'Dodawanie roli w dokumentach'" :show="createDocumentRoleDialog"
-                    :label="'Nazwa roli'" @close="createDocumentRoleDialog = false" @save="saveDocumentRole"/>
+                    :label="'Nazwa roli'" @close="createDocumentRoleDialog = false" @save="saveDocumentRole2"/>
 
     <EditTextDialog :header="'Edycja roli w dokumentach'" :show="editDocumentRoleDialog"
-                    :label="'Nazwa roli'" @close="editDocumentRoleDialog = false" @save="saveDocumentRole"
-                    :value="editedRole ? editedRole.name : ''"/>
+                    :label="'Nazwa roli'" @close="editDocumentRoleDialog = false" @save="saveDocumentRole2"
+                    :value="editedRole ? editedRole.name : ''" :value2 ="editedRole ? editedRole.accesstype : '' " />
   </div>
 </template>
 
@@ -37,18 +37,21 @@ export default {
     return {
       headers: [
         {text: 'Nazwa', sortable: false, value: 'name'},
+        {text: 'Dostep', sortable: false, value: 'accesstype'},
         {text: 'Akcje', sortable: false, value: 'actions'},
       ],
       documentRoles: [],
       createDocumentRoleDialog: false,
       editDocumentRoleDialog: false,
       editedRole: null,
+      editedAccess: null
     }
   },
 
   created() {
     api.get(this, '/document-roles/list', null,successResponse => {
       this.documentRoles = successResponse;
+
     }, errorResponse => {
       console.log(errorResponse);
     });
@@ -64,6 +67,9 @@ export default {
     prepareRoleEdition(item) {
       this.editedRole = item;
       this.editDocumentRoleDialog = true;
+      console.log("accesstype")
+      console.log(this.editedRole.accesstype)
+
     },
 
     saveDocumentRole(name) {
@@ -73,11 +79,19 @@ export default {
         this.createDocumentRole(name);
       }
     },
+    saveDocumentRole2(name,accessType) {
+          if (this.editedRole) {
+            this.editDocumentRole(name, accessType);
+          } else {
+            this.createDocumentRole(name, accessType);
+          }
+        },
 
-    editDocumentRole(name) {
+    editDocumentRole(name,accessType) {
       let edited = this.documentRoles.find(role => role.id === this.editedRole.id);
-      api.put(this, '/document-roles', {id: this.editedRole.id, name: name}, () => {
+      api.put(this, '/document-roles', {id: this.editedRole.id, name: name, accesstype: accessType}, () => {
           edited.name = name;
+          edited.accesstype = accessType;
           this.editDocumentRoleDialog = false;
         },
         errorResponse => {
@@ -85,12 +99,13 @@ export default {
         });
     },
 
-    createDocumentRole(name) {
-      api.post(this, '/document-roles', {name: name}, successResponse => {
+    createDocumentRole(name,accessType) {
+      api.post(this, '/document-roles', {name: name + accessType, accesstype: accessType}, successResponse => {
             this.createDocumentRoleDialog = false;
             this.documentRoles.push({
               id: successResponse.id,
-              name: name
+              name: name,
+              accesstype:accessType
             });
           },
           errorResponse => {

@@ -12,6 +12,7 @@ import com.apsi.modules.document.query.DocumentRepository;
 import com.apsi.modules.documentAccess.domain.DocumentAccess;
 import com.apsi.modules.documentAccess.query.DocumentAccessRepository;
 import com.apsi.modules.documentRole.domain.DocumentRole;
+import com.apsi.modules.documentRole.dto.DocumentRoleDTO;
 import com.apsi.modules.documentRole.query.DocumentRoleRepository;
 import com.apsi.modules.file.domain.DatabaseFile;
 import com.apsi.modules.user.domain.User;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import static java.lang.System.*;
 
 @RestController
 @RequestMapping("/documents")
@@ -79,7 +81,20 @@ public class DocumentController {
         DocumentDataDTO response = new DocumentDataDTO(documentData);
         return ResponseEntity.ok(response);
     }
-
+    @GetMapping("/users-list")
+    public ResponseEntity<?> getDocument_User(@RequestParam Long id) {
+        System.out.println("Jestem");
+        Document document = documentRepository.findById(id).orElseThrow();
+        System.out.println("Jestem");
+        List<DocumentUser> lista= document.getDocumentUsers();
+        System.out.println(lista.size());
+        List<DocumentUser> d =lista.stream().filter(item->item.getId() == identity.getRawId()).collect(Collectors.toList());
+        System.out.println(d.size());
+        List<DocumentRoleDTO> response = d.stream().map(DocUser->new DocumentRoleDTO(DocUser.getDocumentRole())).collect(Collectors.toList());
+        /*String response = r.get(0).getAccesstype().toString();*/
+        System.out.println(response);
+        return ResponseEntity.ok(response);
+    }
     @GetMapping("/versions")
     public ResponseEntity<?> getDocumentVersions(@RequestParam Long id) {
         return ResponseEntity.ok(documentDataRepository.findVersionsByDocumentId(id));

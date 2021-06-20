@@ -19,6 +19,9 @@
           <div class="ma-2">
             <strong class="mr-2">Opis:</strong> {{ document.description }}
           </div>
+          <div class="ma-2">
+            <strong class="mr-2">Data utworzenia wersji:</strong> {{ document.creationDate }}
+          </div>
         </v-form>
       </v-flex>
       <v-flex xs2 mt-5 mr-5>
@@ -62,13 +65,13 @@
     </v-layout>
 
     <v-btn @click="saveDocumentDialog = true" color="primary" style="color: black" class="ma-5"
-           v-if="accessType === 'UPDATE'">Zapisz nową wersję</v-btn>
+           v-if="editAllowed()">Zapisz nową wersję</v-btn>
     <v-btn @click="returnPage()" color="primary" style="color: black" class="ma-5 ml-1">Powrót</v-btn>
 
     <input type="file" ref="attachment" v-show="false" v-on:change="handleUpload">
 
     <EditTextDialog :header="'Dodanie nowej wersji dokumentu'" :show="saveDocumentDialog" :label="'Wersja'"
-                            @close="saveDocumentDialog = false" @save="saveDocument"/>
+                    @close="saveDocumentDialog = false" @save="saveDocument"/>
   </div>
 </template>
 
@@ -93,6 +96,7 @@ export default {
         status: '',
         author: '',
         files: [],
+        creationDate: '',
       },
       accessType: "",
       documentRoles: [],
@@ -100,6 +104,9 @@ export default {
       versionsLoaded: false,
       documentLoaded: false,
       saveDocumentDialog: false,
+      roles:[],
+      ids:[],
+      elements_filled:false
     };
   },
 
@@ -179,6 +186,31 @@ export default {
 
     returnPage() {
       this.$router.push("/app/documents");
+    },
+
+    editAllowed() {
+
+      if (!this.elements_filled){
+        if (this.document!=null){
+          this.ids.push(this.$route.params.id);
+          api.get(this, '/documents/users-list', {id:this.$route.params.id},successResponse => {
+            this.roles.push(successResponse);
+
+          }, errorResponse => {
+            console.log(errorResponse);
+          });
+        }
+
+        this.elements_filled=true;
+      }
+      var index=  0;
+      if (this.roles.length ===0 || this.roles[0].length===0) {console.log("tu jestem");
+        return this.accessType === 'UPDATE';
+
+      }
+      else {
+        console.log(this.roles[index][0].accesstype);
+        return this.accessType === 'UPDATE' || this.roles[index][0].accesstype=='UPDATE';}
     },
 
     async handleUpload() {

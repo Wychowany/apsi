@@ -32,6 +32,9 @@ export default {
         {text: 'Akcje', sortable: false, value: 'actions'},
       ],
       documents: [],
+      roles:[],
+      ids:[],
+      elements_filled:false
     }
   },
 
@@ -41,7 +44,14 @@ export default {
     }, errorResponse => {
       console.log(errorResponse);
     });
+
+
+
+
+
+
   },
+
 
   methods: {
     createDocument() {
@@ -53,7 +63,30 @@ export default {
     },
 
     editAllowed(item) {
-      return item.isAuthor || item.accessType === 'UPDATE';
+      console.log(this.documents.length)
+
+      if (!this.elements_filled){
+        if (this.documents.length>0){
+          for (var i=0; i<this.documents.length;i++){
+            this.ids.push(this.documents[i].id);
+            api.get(this, '/documents/users-list', {id:this.documents[i].id},successResponse => {
+              this.roles.push(successResponse);
+
+            }, errorResponse => {
+              console.log(errorResponse);
+            });
+          }
+        }
+        this.elements_filled=true;
+      }
+      var index=  this.ids.indexOf(item.id);
+      if (this.roles.length ===0 || this.roles[0].length===0) {console.log("tu jestem");
+        return item.isAuthor || item.accessType === 'UPDATE';
+
+      }
+      else {
+        console.log(this.roles[index][0].accesstype);
+        return item.isAuthor || item.accessType === 'UPDATE' || this.roles[index][0].accesstype=='UPDATE';}
     },
 
     readAllowed(item) {
