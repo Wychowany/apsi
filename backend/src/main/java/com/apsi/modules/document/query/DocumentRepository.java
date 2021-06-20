@@ -9,5 +9,6 @@ public interface DocumentRepository extends AbstractEntityRepository<Document, L
 
     List<Document> findAllByAuthorId(Long authorId);
 
+
     boolean existsByIdAndAuthorId(Long id, Long authorId);
 }

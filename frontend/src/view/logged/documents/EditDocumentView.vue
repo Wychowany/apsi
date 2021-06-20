@@ -65,7 +65,7 @@
     </v-layout>
 
     <v-btn @click="saveDocumentDialog = true" color="primary" style="color: black" class="ma-5"
-           v-if="accessType === 'UPDATE'">Zapisz nową wersję</v-btn>
+           v-if="editAllowed()">Zapisz nową wersję</v-btn>
     <v-btn @click="returnPage()" color="primary" style="color: black" class="ma-5 ml-1">Powrót</v-btn>
 
     <input type="file" ref="attachment" v-show="false" v-on:change="handleUpload">
@@ -104,6 +104,9 @@ export default {
       versionsLoaded: false,
       documentLoaded: false,
       saveDocumentDialog: false,
+      roles:[],
+      ids:[],
+      elements_filled:false
     };
   },
 
@@ -184,6 +187,31 @@ export default {
     returnPage() {
       this.$router.push("/app/documents");
     },
+
+    editAllowed() {
+
+       if (!this.elements_filled){
+        if (this.document!=null){
+                      this.ids.push(this.$route.params.id);
+                      api.get(this, '/documents/users-list', {id:this.$route.params.id},successResponse => {
+                                  this.roles.push(successResponse);
+
+                                  }, errorResponse => {
+                                    console.log(errorResponse);
+                                  });
+                  }
+
+                  this.elements_filled=true;
+       }
+         var index=  0;
+       if (this.roles.length ===0 || this.roles[0].length===0) {console.log("tu jestem");
+       return this.accessType === 'UPDATE';
+
+       }
+        else {
+        console.log(this.roles[index][0].accesstype);
+        return this.accessType === 'UPDATE' || this.roles[index][0].accesstype=='UPDATE';}
+        },
 
     async handleUpload() {
       const file = this.$refs.attachment.files[0];

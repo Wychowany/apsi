@@ -11,6 +11,9 @@
                 <v-autocomplete v-if= "header == 'Dodawanie roli w dokumentach'" label="Typ dostępu" v-model="accessType" :items="accessTypes"
                                               item-text="name" item-value="id" clearable
                                               outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
+                <v-autocomplete v-if= "header == 'Edycja roli w dokumentach'" label="Typ dostępu" v-model="accessType" :items="accessTypes"
+                                                              item-text="name" item-value="id" clearable
+                                                              outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
               </v-flex>
             </v-layout>
           </v-form>
@@ -37,6 +40,14 @@ export default {
       this.internalValue = val;
     },
 
+    value2(val){
+    if (val!='')  {
+    if (val=='UPDATE') this.accessType = { id: "UPDATE", name: "Edycja" }
+    else if (val=='READ') this.accessType = { id: "READ", name: "Podgląd" }
+    }
+
+    }
+,
     dialog(val) {
       if (!val) {
         this.internalValue = '';
@@ -48,8 +59,9 @@ export default {
   data() {
     return {
       internalValue: '',
+
       dialog: false,
-      accessType: null,
+        accessType: null,
         accessTypes: [
                 { id: "READ", name: "Podgląd" },
                 { id: "UPDATE", name: "Edycja" }
@@ -58,8 +70,9 @@ export default {
   },
 
   methods: {
+
     submit(header) {
-    if (header == 'Dodawanie roli w dokumentach'){
+    if (header == 'Dodawanie roli w dokumentach' || header == 'Edycja roli w dokumentach'){
       this.$emit("save", this.internalValue,this.accessType);}
       else{
       this.$emit("save", this.internalValue);
@@ -72,6 +85,7 @@ export default {
     header: String,
     label: String,
     value: {type: String, default: ''},
+    value2: String,
     show: {type: Boolean, default: false},
   }
 }
