@@ -8,4 +8,5 @@ import java.util.List;
 public interface SeriesRepository extends AbstractEntityRepository<Series, Long> {
 
     List<Series> findAllByAuthorId(Long authorId);
+    boolean existsByIdAndAuthorId(Long id, Long authorId);
 }

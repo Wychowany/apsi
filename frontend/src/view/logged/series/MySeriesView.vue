@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div class="ma-3">
     <v-toolbar dark color="lighter">
       <v-toolbar-title>Moje zbiory</v-toolbar-title>
@@ -12,6 +12,7 @@
         class="elevation-1">
       <template v-slot:item.actions="{ item }">
         <v-icon small @click="editSeries(item)">edit</v-icon>
+        <v-icon small class="ml-3" @click="manageAccess(item)">person</v-icon>
         <v-icon small class="ml-3" @click="deleteSeries(item)">delete</v-icon>
       </template>
     </v-data-table>
@@ -50,6 +51,9 @@ export default {
     editSeries(item) {
       this.$router.push("/app/series/edit/" + item.id);
     },
+     manageAccess(item) {
+          this.$router.push("/app/series/access/" + item.id);
+        },
 
     deleteSeries(item) {
       api.delete(this, "/series/", {id: item.id}, () => {
