@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,6 +66,13 @@ public class DocumentController {
                         documents.stream().map(document -> new DocumentDTO(document, true)),
                         accesses.stream().map(access -> new DocumentDTO(access, false))
                 ).collect(Collectors.toList()));
+    }
+    @GetMapping("/all")
+    public ResponseEntity<?> getDocuments_all() {
+        List<Document> documents = documentRepository.findAll();
+        return ResponseEntity.ok(
+                documents.stream().map(document -> new DocumentDTO(document, true))
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/my-list")

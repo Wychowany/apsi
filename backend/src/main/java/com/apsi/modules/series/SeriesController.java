@@ -5,13 +5,16 @@ import com.apsi.global.Identity;
 import com.apsi.global.OkResponse;
 import com.apsi.modules.document.DocumentController;
 import com.apsi.modules.document.domain.DocumentData;
+import com.apsi.modules.document.dto.DocumentDTO;
 import com.apsi.modules.document.query.DocumentDataRepository;
+import com.apsi.modules.seriesAccess.domain.SeriesAccess;
 import com.apsi.modules.series.domain.Series;
 import com.apsi.modules.series.domain.SeriesData;
 import com.apsi.modules.series.domain.SeriesDocument;
 import com.apsi.modules.series.dto.*;
 import com.apsi.modules.series.query.SeriesDataRepository;
 import com.apsi.modules.series.query.SeriesRepository;
+import com.apsi.modules.seriesAccess.query.SeriesAccessRepository;
 import com.apsi.modules.user.domain.User;
 import com.apsi.modules.user.query.UserRepository;
 import lombok.AllArgsConstructor;
@@ -24,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.lang.System.*;
 
 @RestController
 @RequestMapping("/series")
@@ -45,13 +50,18 @@ class SeriesController {
     @Autowired
     private final SeriesDataRepository seriesDataRepository;
 
+    @Autowired
+    private final SeriesAccessRepository seriesAccessRepository;
+
     private static final Logger logger = LogManager.getLogger(DocumentController.class);
 
     @GetMapping("/list")
     public ResponseEntity<?> getSeries() {
-        List<Series> series = seriesRepository.findAll();
+        List<Series> series = seriesRepository.findAllByAuthorId(identity.getRawId());
+        List<SeriesAccess> accesses = seriesAccessRepository.findAllByUserIdAndSeriesAuthorIdIsNot(identity.getRawId(), identity.getRawId());
+        System.out.println(accesses.size());
         List<SeriesDTO> response = series.stream().map(SeriesDTO::new).collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(Stream.concat(series.stream().map(serie -> new SeriesDTO(serie,true)),accesses.stream().map(access->new SeriesDTO(access,false))).collect(Collectors.toList()));
     }
 
     @GetMapping("/my-list")

@@ -48,7 +48,7 @@
       </v-flex>
     </v-layout>
 
-    <v-btn @click="saveSeriesDialog = true" color="primary" style="color: black" class="ma-5">Zapisz nową wersję</v-btn>
+    <v-btn @click="saveSeriesDialog = true" v-if="this.accessType==='UPDATE'" color="primary" style="color: black" class="ma-5">Zapisz nową wersję</v-btn>
     <v-btn @click="returnPage()" color="primary" style="color: black" class="ma-5 ml-1">Powrót</v-btn>
 
     <EditTextDialog :header="'Dodanie nowej wersji zbioru'" :show="saveSeriesDialog" :label="'Wersja'"
@@ -79,6 +79,7 @@ export default {
         author: '',
         seriesDocuments: [],
       },
+      accessType: "",
       versions: [],
       versionsLoaded: false,
       seriesLoaded: false,
@@ -107,7 +108,7 @@ export default {
 
   created() {
 
-    api.get(this, '/documents/list', null,successResponse => {
+    api.get(this, '/documents/all', null,successResponse => {
       this.accessibleDocuments = successResponse;
       this.accessibleDocumentsLoaded = true;
     }, errorResponse => {
@@ -127,6 +128,13 @@ export default {
     }, errorResponse => {
       console.log(errorResponse);
     });
+
+    api.get(this, '/series-access/type', {id: this.$route.params.id}, successResponse => {
+          this.accessType = successResponse.data;
+          console.log(this.accessType);
+        }, errorResponse => {
+          console.log(errorResponse);
+        });
   },
 
   methods: {
