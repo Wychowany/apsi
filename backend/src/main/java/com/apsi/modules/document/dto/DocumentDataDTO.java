@@ -50,7 +50,7 @@ public class DocumentDataDTO {
         this.documentUsers = documentData.getDocument().getDocumentUsers().stream().map(DocumentUserNameDTO::new).collect(Collectors.toList());
         this.files = documentData.getFiles().stream().map(FileDTO::new).collect(Collectors.toList());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        //System.out.println(documentData.getCreationDate().toString());
+
         this.creationDate =documentData.getCreationDate().format(formatter);
     }
 }

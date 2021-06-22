@@ -36,14 +36,10 @@ public class DocumentRoleController {
     @GetMapping("/list")
     public ResponseEntity<?> getDocumentRoles() {
         List<DocumentRole> documentRoles = documentRoleRepository.findAll();
-        for (int i =0;i<documentRoles.size();i++){
-            System.out.println(((DocumentRole)documentRoles.get(i)).getAccesstype());
-                 }
+
 
         List<DocumentRoleDTO> response = documentRoles.stream().map(DocumentRoleDTO::new).collect(Collectors.toList());
-        for (int i =0;i<response.size();i++){
-            System.out.println(((DocumentRoleDTO)response.get(i)).getAccesstype());
-        }
+
 
 
         return ResponseEntity.ok(response);

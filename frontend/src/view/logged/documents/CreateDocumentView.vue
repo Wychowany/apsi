@@ -154,6 +154,7 @@ export default {
     },
 
     addDocumentUser(userId, roleId) {
+
       this.document.documentUsers.push({ userId, roleId });
       this.documentUserDialog = false;
     },

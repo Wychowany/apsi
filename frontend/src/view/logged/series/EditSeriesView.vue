@@ -28,7 +28,10 @@
 
     <v-layout>
       <v-flex xs12 ml-4 mr-4>
-        <v-toolbar dark color="lighter">
+        <div class="ma-2">
+                           <strong class="mr-2">Data utworzenia wersji:</strong> {{ series.creationDate }}
+                          </div>
+          <v-toolbar dark color="lighter">
           <v-toolbar-title>Dokumenty</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn @click="seriesDocumentDialog = true" color="light"
@@ -37,6 +40,7 @@
         <v-alert type="info" class="ma-5" v-if="series.seriesDocuments.length === 0">
           Brak dodanych dokumentów.
         </v-alert>
+
         <div class="ma-5">
           <div v-for="(document, idx) in series.seriesDocuments" :key="'document-' + idx" class="mt-1 ml-5">
             <strong class="mr-2">{{ idx + 1 }}.</strong>
@@ -131,7 +135,7 @@ export default {
 
     api.get(this, '/series-access/type', {id: this.$route.params.id}, successResponse => {
           this.accessType = successResponse.data;
-          console.log(this.accessType);
+
         }, errorResponse => {
           console.log(errorResponse);
         });

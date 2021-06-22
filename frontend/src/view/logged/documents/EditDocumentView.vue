@@ -153,6 +153,12 @@ export default {
     }, errorResponse => {
       console.log(errorResponse);
     });
+    api.get(this, '/documents/users-list', null,successResponse => {
+              this.roles = successResponse;
+            }, errorResponse => {
+              console.log(errorResponse);
+            });
+
   },
 
   methods: {
@@ -190,27 +196,25 @@ export default {
 
     editAllowed() {
 
-       if (!this.elements_filled){
-        if (this.document!=null){
-                      this.ids.push(this.$route.params.id);
-                      api.get(this, '/documents/users-list', {id:this.$route.params.id},successResponse => {
-                                  this.roles.push(successResponse);
+       var rola=-1;
+          for (var i=0;i<this.roles.length;i++){
+          console.log(this.roles[i].doc_id)
+          console.log(this.$route.params.id)
+          if ((this.roles[i].doc_id/1)===(this.$route.params.id/1)) {rola=i;
+          console.log(rola);
+          console.log(this.roles[rola]['accesstype']);
+          console.log(typeof this.roles[rola]);}
+          }
+          if (rola <0) {
 
-                                  }, errorResponse => {
-                                    console.log(errorResponse);
-                                  });
-                  }
+          return this.accessType === 'UPDATE';
 
-                  this.elements_filled=true;
-       }
-         var index=  0;
-       if (this.roles.length ===0 || this.roles[0].length===0) {console.log("tu jestem");
-       return this.accessType === 'UPDATE';
+          }
+           else {
 
-       }
-        else {
-        console.log(this.roles[index][0].accesstype);
-        return this.accessType === 'UPDATE' || this.roles[index][0].accesstype=='UPDATE';}
+           console.log(typeof this.roles[rola]['accesstype']);
+           return this.accessType === 'UPDATE' && this.roles[rola]['accesstype']==='UPDATE';}
+
         },
 
     async handleUpload() {

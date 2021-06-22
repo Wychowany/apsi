@@ -67,8 +67,7 @@ export default {
     prepareRoleEdition(item) {
       this.editedRole = item;
       this.editDocumentRoleDialog = true;
-      console.log("accesstype")
-      console.log(this.editedRole.accesstype)
+
 
     },
 

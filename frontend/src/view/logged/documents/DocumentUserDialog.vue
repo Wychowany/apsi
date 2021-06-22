@@ -58,6 +58,7 @@ export default {
 
   methods: {
     submit() {
+
       this.$emit("save", this.userId, this.roleId);
       this.dialog = false;
     }

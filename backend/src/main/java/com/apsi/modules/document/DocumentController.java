@@ -85,25 +85,36 @@ public class DocumentController {
     @GetMapping
     public ResponseEntity<?> getDocument(@RequestParam Long id, @RequestParam(required = false) String version) {
         Document document = documentRepository.findById(id).orElseThrow();
-        System.out.println("Wchodze");
+
         DocumentData documentData = version == null ? document.getDocumentData() : getDocumentVersionData(document, version);
-        System.out.println("Wchodze1");
+
         DocumentDataDTO response = new DocumentDataDTO(documentData);
-        System.out.println("Wchodze2");
+
         return ResponseEntity.ok(response);
     }
     @GetMapping("/users-list")
-    public ResponseEntity<?> getDocument_User(@RequestParam Long id) {
-        System.out.println("Jestem");
-        Document document = documentRepository.findById(id).orElseThrow();
-        System.out.println("Jestem");
-        List<DocumentUser> lista= document.getDocumentUsers();
-        System.out.println(lista.size());
-        List<DocumentUser> d =lista.stream().filter(item->item.getId() == identity.getRawId()).collect(Collectors.toList());
-        System.out.println(d.size());
-        List<DocumentRoleDTO> response = d.stream().map(DocUser->new DocumentRoleDTO(DocUser.getDocumentRole())).collect(Collectors.toList());
-        /*String response = r.get(0).getAccesstype().toString();*/
-        System.out.println(response);
+    public ResponseEntity<?> getDocument_User() {
+
+        List<Document> docs= documentRepository.findAll();
+        List<DocumentRoleDTO> response = new ArrayList<>();
+
+        for (int i =0;i<docs.size();i++){
+        List<DocumentUser> lista= docs.get(i).getDocumentUsers();
+
+        List<DocumentUser> d =lista.stream().filter(item->item.getUser().getId()== identity.getRawId()).collect(Collectors.toList());
+
+
+        for (int j=0; j<d.size();j++) {
+
+                response.add(new DocumentRoleDTO(d.get(j).getDocumentRole(),docs.get(i).getId()));
+
+
+        }
+
+        }
+
+
+
         return ResponseEntity.ok(response);
     }
     @GetMapping("/versions")

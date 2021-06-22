@@ -44,6 +44,11 @@ export default {
     }, errorResponse => {
       console.log(errorResponse);
     });
+    api.get(this, '/documents/users-list', null,successResponse => {
+          this.roles = successResponse;
+        }, errorResponse => {
+          console.log(errorResponse);
+        });
 
 
 
@@ -63,35 +68,33 @@ export default {
     },
 
     editAllowed(item) {
-    console.log(this.documents.length)
-
-   if (!this.elements_filled){
-    if (this.documents.length>0){
-              for (var i=0; i<this.documents.length;i++){
-                  this.ids.push(this.documents[i].id);
-                  api.get(this, '/documents/users-list', {id:this.documents[i].id},successResponse => {
-                              this.roles.push(successResponse);
-
-                              }, errorResponse => {
-                                console.log(errorResponse);
-                              });
-              }
-              }
-              this.elements_filled=true;
+    var rola=-1;
+   for (var i=0;i<this.roles.length;i++){
+   if ((this.roles[i].doc_id/1)===(item.id/1)) rola=i;
    }
-     var index=  this.ids.indexOf(item.id);
-   if (this.roles.length ===0 || this.roles[0].length===0) {console.log("tu jestem");
+   if (rola <0) {
+
    return item.isAuthor || item.accessType === 'UPDATE';
 
    }
     else {
-    console.log(this.roles[index][0].accesstype);
-    return item.isAuthor || item.accessType === 'UPDATE' || this.roles[index][0].accesstype=='UPDATE';}
+   return item.isAuthor || (item.accessType === 'UPDATE' && this.roles[rola]['accesstype']==='UPDATE');}
     },
 
     readAllowed(item) {
-      return !item.isAuthor && item.accessType === 'READ';
-    }
+         var rola=-1;
+           for (var i=0;i<this.roles.length;i++){
+           if (this.roles[i].doc_id===item.id) rola=i;
+           }
+           if (rola <0) {
+      return !item.isAuthor && item.accessType === 'READ' ;}
+      else {
+          return !item.isAuthor && (item.accessType === 'READ' || this.roles[rola]['accesstype']==='READ');}
+
+      }
+
+
+
   }
 }
 </script>

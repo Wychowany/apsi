@@ -5,6 +5,8 @@ import lombok.Data;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 public class SeriesDataDTO {
@@ -25,6 +27,8 @@ public class SeriesDataDTO {
 
     private List<SeriesDocumentDTO> seriesDocuments;
 
+    private String creationDate;
+
     public SeriesDataDTO(SeriesData seriesData) {
         this.id = seriesData.getSeries().getId();
         this.name = seriesData.getSeries().getName();
@@ -34,6 +38,8 @@ public class SeriesDataDTO {
         this.seriesVersion = seriesData.getSeriesVersion();
         this.author = seriesData.getAuthor().getFullName();
         this.seriesDocuments = seriesData.getDocumentsInSeries().stream().map(SeriesDocumentDTO::new).collect(Collectors.toList());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+        this.creationDate =seriesData.getCreationDate().format(formatter);
     }
 }

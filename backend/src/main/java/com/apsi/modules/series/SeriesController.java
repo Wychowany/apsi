@@ -59,7 +59,7 @@ class SeriesController {
     public ResponseEntity<?> getSeries() {
         List<Series> series = seriesRepository.findAllByAuthorId(identity.getRawId());
         List<SeriesAccess> accesses = seriesAccessRepository.findAllByUserIdAndSeriesAuthorIdIsNot(identity.getRawId(), identity.getRawId());
-        System.out.println(accesses.size());
+
         List<SeriesDTO> response = series.stream().map(SeriesDTO::new).collect(Collectors.toList());
         return ResponseEntity.ok(Stream.concat(series.stream().map(serie -> new SeriesDTO(serie,true)),accesses.stream().map(access->new SeriesDTO(access,false))).collect(Collectors.toList()));
     }
