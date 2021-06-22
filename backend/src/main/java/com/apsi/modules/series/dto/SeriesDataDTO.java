@@ -33,7 +33,7 @@ public class SeriesDataDTO {
         this.dataId = seriesData.getId();
         this.seriesVersion = seriesData.getSeriesVersion();
         this.author = seriesData.getAuthor().getFullName();
-        this.seriesDocuments = seriesData.getDocumentsInSeries().stream().map(SeriesDocumentDTO::new).collect(Collectors.toList());
+        this.seriesDocuments = seriesData.getDocuments().stream().map(SeriesDocumentDTO::new).collect(Collectors.toList());
 
     }
 }
