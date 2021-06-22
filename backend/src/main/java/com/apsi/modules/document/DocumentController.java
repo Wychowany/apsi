@@ -85,8 +85,11 @@ public class DocumentController {
     @GetMapping
     public ResponseEntity<?> getDocument(@RequestParam Long id, @RequestParam(required = false) String version) {
         Document document = documentRepository.findById(id).orElseThrow();
+        System.out.println("Wchodze");
         DocumentData documentData = version == null ? document.getDocumentData() : getDocumentVersionData(document, version);
+        System.out.println("Wchodze1");
         DocumentDataDTO response = new DocumentDataDTO(documentData);
+        System.out.println("Wchodze2");
         return ResponseEntity.ok(response);
     }
     @GetMapping("/users-list")
