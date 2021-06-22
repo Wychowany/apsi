@@ -10,5 +10,5 @@ public class EditDocumentRoleDTO {
 
     private String name;
 
-    private DocumentRoleAccessType accesstype;
+    private DocumentRoleAccessType accessType;
 }

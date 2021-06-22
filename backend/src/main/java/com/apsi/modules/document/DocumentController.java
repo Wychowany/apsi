@@ -81,20 +81,16 @@ public class DocumentController {
         DocumentDataDTO response = new DocumentDataDTO(documentData);
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/users-list")
-    public ResponseEntity<?> getDocument_User(@RequestParam Long id) {
-        System.out.println("Jestem");
+    public ResponseEntity<?> getDocumentUser(@RequestParam Long id) {
         Document document = documentRepository.findById(id).orElseThrow();
-        System.out.println("Jestem");
-        List<DocumentUser> lista= document.getDocumentUsers();
-        System.out.println(lista.size());
+        List<DocumentUser> lista = document.getDocumentUsers();
         List<DocumentUser> d =lista.stream().filter(item->item.getId() == identity.getRawId()).collect(Collectors.toList());
-        System.out.println(d.size());
         List<DocumentRoleDTO> response = d.stream().map(DocUser->new DocumentRoleDTO(DocUser.getDocumentRole())).collect(Collectors.toList());
-        /*String response = r.get(0).getAccesstype().toString();*/
-        System.out.println(response);
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/versions")
     public ResponseEntity<?> getDocumentVersions(@RequestParam Long id) {
         return ResponseEntity.ok(documentDataRepository.findVersionsByDocumentId(id));

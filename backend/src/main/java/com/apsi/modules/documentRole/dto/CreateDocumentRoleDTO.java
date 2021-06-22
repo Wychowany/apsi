@@ -7,5 +7,6 @@ import lombok.Data;
 public class CreateDocumentRoleDTO {
 
     private String name;
-    private DocumentRoleAccessType accesstype;
+
+    private DocumentRoleAccessType accessType;
 }
