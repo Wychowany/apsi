@@ -12,9 +12,9 @@
 10. Odpalamy poprzez tą konfiguracje
 11. Łączymy się z bazą poprzez skrypt backend/etc/database/baza.sh
 12. Wykonujemy na bazie
-    INSERT INTO application_users (id, creation_date, modification_date, version, accepted, active, confirmed, email, name,
+    INSERT INTO application_users (creation_date, modification_date, version, accepted, active, confirmed, email, name,
     password, surname, system_role, deleted)
-    VALUES (1, current_date, current_date, 0, true, true, true, 'aleksander.nuszel@gmail.com', 'Aleksander',
+    VALUES (current_date, current_date, 0, true, true, true, 'aleksander.nuszel@gmail.com', 'Aleksander',
     '$2a$10$ldaPwd68M09cE418PfBzF.KIAeQboeSpR9MCzUaNVDpNeVY9DQ5gy', 'Nuszel', 'ADMINISTRATOR',
     false);
     
