@@ -13,6 +13,7 @@
       <template v-slot:item.actions="{ item }">
         <v-icon small @click="editDocument(item)" v-if="editAllowed(item)">edit</v-icon>
         <v-icon small @click="editDocument(item)" v-else-if="readAllowed(item)">description</v-icon>
+        <v-icon small @click="deleteDocument(item)" class="ml-3" v-if="deleteAllowed(item)">delete</v-icon>
       </template>
     </v-data-table>
   </div>
@@ -32,9 +33,6 @@ export default {
         {text: 'Akcje', sortable: false, value: 'actions'},
       ],
       documents: [],
-      roles:[],
-      ids:[],
-      elements_filled:false
     }
   },
 
@@ -44,14 +42,7 @@ export default {
     }, errorResponse => {
       console.log(errorResponse);
     });
-
-
-
-
-
-
   },
-
 
   methods: {
     createDocument() {
@@ -62,35 +53,26 @@ export default {
       this.$router.push("/app/documents/edit/" + item.id);
     },
 
+    deleteDocument(item) {
+      api.delete(this, "/documents/", {id: item.id}, () => {
+            this.documents = this.documents.filter(d => d.id !== item.id);
+          },
+          errorResponse => {
+            console.log(errorResponse);
+          });
+    },
+
+    deleteAllowed(item) {
+      return item.isAuthor || item.documentAccessType === 'DELETE' || item.documentRoleAccessType === 'DELETE';
+    },
+
     editAllowed(item) {
-      console.log(this.documents.length)
-
-      if (!this.elements_filled){
-        if (this.documents.length>0){
-          for (var i=0; i<this.documents.length;i++){
-            this.ids.push(this.documents[i].id);
-            api.get(this, '/documents/users-list', {id:this.documents[i].id},successResponse => {
-              this.roles.push(successResponse);
-
-            }, errorResponse => {
-              console.log(errorResponse);
-            });
-          }
-        }
-        this.elements_filled=true;
-      }
-      var index=  this.ids.indexOf(item.id);
-      if (this.roles.length ===0 || this.roles[0].length===0) {console.log("tu jestem");
-        return item.isAuthor || item.accessType === 'UPDATE';
-
-      }
-      else {
-        console.log(this.roles[index][0].accesstype);
-        return item.isAuthor || item.accessType === 'UPDATE' || this.roles[index][0].accesstype=='UPDATE';}
+      return item.isAuthor || item.documentAccessType === 'UPDATE' || item.documentRoleAccessType === 'UPDATE'
+          || item.documentAccessType === 'DELETE' || item.documentRoleAccessType === 'DELETE';
     },
 
     readAllowed(item) {
-      return !item.isAuthor && item.accessType === 'READ';
+      return !item.isAuthor && (item.documentAccessType === 'READ' || item.documentRoleAccessType === 'READ');
     }
   }
 }

@@ -8,18 +8,12 @@
             <v-layout>
               <v-flex xs10>
                 <v-text-field :label="label" type="text" class="ml-5" v-model="internalValue"></v-text-field>
-                <v-autocomplete v-if= "header == 'Dodawanie roli w dokumentach'" label="Typ dostępu" v-model="accessType" :items="accessTypes"
-                                              item-text="name" item-value="id" clearable
-                                              outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
-                <v-autocomplete v-if= "header == 'Edycja roli w dokumentach'" label="Typ dostępu" v-model="accessType" :items="accessTypes"
-                                                              item-text="name" item-value="id" clearable
-                                                              outlined class="mt-5 ml-5 mr-5"></v-autocomplete>
               </v-flex>
             </v-layout>
           </v-form>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn color="primary" style="color: black" :disabled="!internalValue" @click="submit(header)">Zatwierdź</v-btn>
+          <v-btn color="primary" style="color: black" :disabled="!internalValue" @click="submit">Zatwierdź</v-btn>
           <v-btn color="primary" style="color: black" @click="dialog = false">Anuluj</v-btn>
         </v-card-actions>
       </v-card>
@@ -40,14 +34,6 @@ export default {
       this.internalValue = val;
     },
 
-    value2(val){
-    if (val!='')  {
-    if (val=='UPDATE') this.accessType = { id: "UPDATE", name: "Edycja" }
-    else if (val=='READ') this.accessType = { id: "READ", name: "Podgląd" }
-    }
-
-    }
-,
     dialog(val) {
       if (!val) {
         this.internalValue = '';
@@ -59,24 +45,13 @@ export default {
   data() {
     return {
       internalValue: '',
-
       dialog: false,
-        accessType: null,
-        accessTypes: [
-                { id: "READ", name: "Podgląd" },
-                { id: "UPDATE", name: "Edycja" }
-              ]
     };
   },
 
   methods: {
-
-    submit(header) {
-    if (header == 'Dodawanie roli w dokumentach' || header == 'Edycja roli w dokumentach'){
-      this.$emit("save", this.internalValue,this.accessType);}
-      else{
+    submit() {
       this.$emit("save", this.internalValue);
-      }
       this.dialog = false;
     }
   },
@@ -85,7 +60,6 @@ export default {
     header: String,
     label: String,
     value: {type: String, default: ''},
-    value2: String,
     show: {type: Boolean, default: false},
   }
 }

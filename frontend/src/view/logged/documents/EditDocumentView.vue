@@ -48,8 +48,8 @@
         <v-toolbar dark color="lighter">
           <v-toolbar-title>Załączniki</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn :disabled="false" @click="$refs.attachment.click()" color="light" v-if="accessType === 'UPDATE'"
-                 style="color: black" class="ma-5">Dodaj załącznik</v-btn>
+          <v-btn :disabled="false" @click="$refs.attachment.click()" color="light"
+                 v-if="editAllowed()" style="color: black" class="ma-5">Dodaj załącznik</v-btn>
         </v-toolbar>
         <v-alert type="info" class="ma-5" v-if="document.files.length === 0">
           Brak dodanych załączników.
@@ -58,7 +58,8 @@
           <div v-for="(file, idx) in document.files" :key="'file-' + idx" class="mt-1">
             <strong class="mr-2">{{ idx + 1 }}.</strong> {{ file.name }}
             <v-icon small class="ml-4" color="blue" @click="downloadAttachment(file)">cloud_download</v-icon>
-            <v-icon small class="ml-4" color="red" v-if="accessType === 'UPDATE'" @click="removeAttachment(idx)">delete</v-icon>
+            <v-icon small class="ml-4" color="red" v-if="editAllowed()"
+                    @click="removeAttachment(idx)">delete</v-icon>
           </div>
         </div>
       </v-flex>
@@ -189,28 +190,7 @@ export default {
     },
 
     editAllowed() {
-
-      if (!this.elements_filled){
-        if (this.document!=null){
-          this.ids.push(this.$route.params.id);
-          api.get(this, '/documents/users-list', {id:this.$route.params.id},successResponse => {
-            this.roles.push(successResponse);
-
-          }, errorResponse => {
-            console.log(errorResponse);
-          });
-        }
-
-        this.elements_filled=true;
-      }
-      var index=  0;
-      if (this.roles.length ===0 || this.roles[0].length===0) {console.log("tu jestem");
-        return this.accessType === 'UPDATE';
-
-      }
-      else {
-        console.log(this.roles[index][0].accesstype);
-        return this.accessType === 'UPDATE' || this.roles[index][0].accesstype=='UPDATE';}
+      return this.accessType === 'UPDATE' || this.accessType === 'DELETE';
     },
 
     async handleUpload() {
