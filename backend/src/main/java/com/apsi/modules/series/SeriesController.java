@@ -117,7 +117,7 @@ class SeriesController {
 
     private List<SeriesData> prepareNewSeriesDataList(Series series, CreateSeriesDTO createSeriesDTO, User author) {
         SeriesData seriesData = new SeriesData(series, createSeriesDTO.getSeriesVersion(), author);
-        seriesData.setDocumentsInSeries(prepareDocumentsInSeries(seriesData, createSeriesDTO.getDocuments()));
+        seriesData.setDocuments(prepareDocumentsInSeries(seriesData, createSeriesDTO.getDocuments()));
 
         return List.of(seriesData);
     }
@@ -140,8 +140,7 @@ class SeriesController {
 
     private SeriesData prepareSeriesDataListExtension(Series series, EditSeriesDTO editSeriesDTO, User author) {
         SeriesData seriesData = new SeriesData(series, editSeriesDTO.getSeriesVersion(), author);
-        seriesData.setDocumentsInSeries(prepareDocumentsInSeries(seriesData, editSeriesDTO.getDocuments()));
-
+        seriesData.setDocuments(prepareDocumentsInSeries(seriesData, editSeriesDTO.getDocuments()));
         return seriesData;
     }
 }

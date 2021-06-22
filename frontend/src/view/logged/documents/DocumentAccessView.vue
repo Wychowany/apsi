@@ -103,7 +103,14 @@ export default {
     },
 
     getAccessName(accessType) {
-      return accessType === 'READ' ? 'Podgląd' : 'Edycja';
+      switch (accessType) {
+        case 'READ':
+          return 'Podgląd';
+        case 'UPDATE':
+          return 'Edycja';
+        case 'DELETE':
+          return 'Usuwanie';
+      }
     }
   }
 }

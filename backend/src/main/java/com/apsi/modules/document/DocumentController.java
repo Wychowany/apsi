@@ -9,10 +9,11 @@ import com.apsi.modules.document.domain.DocumentUser;
 import com.apsi.modules.document.dto.*;
 import com.apsi.modules.document.query.DocumentDataRepository;
 import com.apsi.modules.document.query.DocumentRepository;
+import com.apsi.modules.document.query.DocumentUserRepository;
 import com.apsi.modules.documentAccess.domain.DocumentAccess;
 import com.apsi.modules.documentAccess.query.DocumentAccessRepository;
 import com.apsi.modules.documentRole.domain.DocumentRole;
-import com.apsi.modules.documentRole.dto.DocumentRoleDTO;
+import com.apsi.modules.documentRole.domain.DocumentRoleAccessType;
 import com.apsi.modules.documentRole.query.DocumentRoleRepository;
 import com.apsi.modules.file.domain.DatabaseFile;
 import com.apsi.modules.user.domain.User;
@@ -29,8 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import static java.lang.System.*;
 
 @RestController
 @RequestMapping("/documents")
@@ -53,22 +52,38 @@ public class DocumentController {
     private final DocumentAccessRepository documentAccessRepository;
 
     @Autowired
+    private final DocumentUserRepository documentUserRepository;
+
+    @Autowired
     private final UserRepository userRepository;
 
     private static final Logger logger = LogManager.getLogger(DocumentController.class);
 
     @GetMapping("/list")
     public ResponseEntity<?> getDocuments() {
+        List<DocumentDTO> result = new ArrayList<>();
         List<Document> documents = documentRepository.findAllByAuthorId(identity.getRawId());
         List<DocumentAccess> accesses = documentAccessRepository.findAllByUserIdAndDocumentAuthorIdIsNot(identity.getRawId(), identity.getRawId());
-        return ResponseEntity.ok(
-                    Stream.concat(
-                        documents.stream().map(document -> new DocumentDTO(document, true)),
-                        accesses.stream().map(access -> new DocumentDTO(access, false))
-                ).collect(Collectors.toList()));
+        List<DocumentUser> users = documentUserRepository.findAllByUserIdAndDocumentAuthorIdIsNot(identity.getRawId(), identity.getRawId());
+        result.addAll(documents.stream().map(document -> new DocumentDTO(document, true)).collect(Collectors.toList()));
+        result.addAll(accesses.stream().map(access -> new DocumentDTO(access, false)).collect(Collectors.toList()));
+        users.forEach(u -> {
+            Optional<DocumentDTO> opt = result.stream().filter(dto -> dto.getId().equals(u.getDocument().getId())).findFirst();
+            if (opt.isPresent()) {
+                DocumentDTO dto = opt.get();
+                DocumentRoleAccessType current = dto.getDocumentRoleAccessType();
+                if (current == null || current.compareTo(u.getDocumentRole().getAccessType()) < 0) {
+                    dto.setDocumentRoleAccessType(u.getDocumentRole().getAccessType());
+                }
+            } else {
+                result.add(new DocumentDTO(u, false));
+            }
+        });
+        return ResponseEntity.ok(result);
     }
+
     @GetMapping("/all")
-    public ResponseEntity<?> getDocuments_all() {
+    public ResponseEntity<?> getAllDocuments() {
         List<Document> documents = documentRepository.findAll();
         return ResponseEntity.ok(
                 documents.stream().map(document -> new DocumentDTO(document, true))
@@ -85,38 +100,11 @@ public class DocumentController {
     @GetMapping
     public ResponseEntity<?> getDocument(@RequestParam Long id, @RequestParam(required = false) String version) {
         Document document = documentRepository.findById(id).orElseThrow();
-
         DocumentData documentData = version == null ? document.getDocumentData() : getDocumentVersionData(document, version);
-
         DocumentDataDTO response = new DocumentDataDTO(documentData);
-
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/users-list")
-    public ResponseEntity<?> getDocument_User() {
 
-        List<Document> docs= documentRepository.findAll();
-        List<DocumentRoleDTO> response = new ArrayList<>();
-
-        for (int i =0;i<docs.size();i++){
-        List<DocumentUser> lista= docs.get(i).getDocumentUsers();
-
-        List<DocumentUser> d =lista.stream().filter(item->item.getUser().getId()== identity.getRawId()).collect(Collectors.toList());
-
-
-        for (int j=0; j<d.size();j++) {
-
-                response.add(new DocumentRoleDTO(d.get(j).getDocumentRole(),docs.get(i).getId()));
-
-
-        }
-
-        }
-
-
-
-        return ResponseEntity.ok(response);
-    }
     @GetMapping("/versions")
     public ResponseEntity<?> getDocumentVersions(@RequestParam Long id) {
         return ResponseEntity.ok(documentDataRepository.findVersionsByDocumentId(id));

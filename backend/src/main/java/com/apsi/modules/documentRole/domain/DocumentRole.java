@@ -19,5 +19,5 @@ public class DocumentRole extends AbstractIdEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 64, nullable = false, columnDefinition = "VARCHAR(64) DEFAULT 'READ'")
-    private DocumentRoleAccessType accesstype;
+    private DocumentRoleAccessType accessType;
 }

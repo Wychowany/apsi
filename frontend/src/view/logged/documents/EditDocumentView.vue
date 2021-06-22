@@ -20,7 +20,7 @@
             <strong class="mr-2">Opis:</strong> {{ document.description }}
           </div>
           <div class="ma-2">
-           <strong class="mr-2">Data utworzenia wersji:</strong> {{ document.creationDate }}
+            <strong class="mr-2">Data utworzenia wersji:</strong> {{ document.creationDate }}
           </div>
         </v-form>
       </v-flex>
@@ -48,8 +48,8 @@
         <v-toolbar dark color="lighter">
           <v-toolbar-title>Załączniki</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn :disabled="false" @click="$refs.attachment.click()" color="light" v-if="accessType === 'UPDATE'"
-                 style="color: black" class="ma-5">Dodaj załącznik</v-btn>
+          <v-btn :disabled="false" @click="$refs.attachment.click()" color="light"
+                 v-if="editAllowed()" style="color: black" class="ma-5">Dodaj załącznik</v-btn>
         </v-toolbar>
         <v-alert type="info" class="ma-5" v-if="document.files.length === 0">
           Brak dodanych załączników.
@@ -58,7 +58,8 @@
           <div v-for="(file, idx) in document.files" :key="'file-' + idx" class="mt-1">
             <strong class="mr-2">{{ idx + 1 }}.</strong> {{ file.name }}
             <v-icon small class="ml-4" color="blue" @click="downloadAttachment(file)">cloud_download</v-icon>
-            <v-icon small class="ml-4" color="red" v-if="accessType === 'UPDATE'" @click="removeAttachment(idx)">delete</v-icon>
+            <v-icon small class="ml-4" color="red" v-if="editAllowed()"
+                    @click="removeAttachment(idx)">delete</v-icon>
           </div>
         </div>
       </v-flex>
@@ -71,7 +72,7 @@
     <input type="file" ref="attachment" v-show="false" v-on:change="handleUpload">
 
     <EditTextDialog :header="'Dodanie nowej wersji dokumentu'" :show="saveDocumentDialog" :label="'Wersja'"
-                            @close="saveDocumentDialog = false" @save="saveDocument"/>
+                    @close="saveDocumentDialog = false" @save="saveDocument"/>
   </div>
 </template>
 
@@ -104,9 +105,6 @@ export default {
       versionsLoaded: false,
       documentLoaded: false,
       saveDocumentDialog: false,
-      roles:[],
-      ids:[],
-      elements_filled:false
     };
   },
 
@@ -153,12 +151,6 @@ export default {
     }, errorResponse => {
       console.log(errorResponse);
     });
-    api.get(this, '/documents/users-list', null,successResponse => {
-              this.roles = successResponse;
-            }, errorResponse => {
-              console.log(errorResponse);
-            });
-
   },
 
   methods: {
@@ -195,27 +187,8 @@ export default {
     },
 
     editAllowed() {
-
-       var rola=-1;
-          for (var i=0;i<this.roles.length;i++){
-          console.log(this.roles[i].doc_id)
-          console.log(this.$route.params.id)
-          if ((this.roles[i].doc_id/1)===(this.$route.params.id/1)) {rola=i;
-          console.log(rola);
-          console.log(this.roles[rola]['accesstype']);
-          console.log(typeof this.roles[rola]);}
-          }
-          if (rola <0) {
-
-          return this.accessType === 'UPDATE';
-
-          }
-           else {
-
-           console.log(typeof this.roles[rola]['accesstype']);
-           return this.accessType === 'UPDATE' && this.roles[rola]['accesstype']==='UPDATE';}
-
-        },
+      return this.accessType === 'UPDATE' || this.accessType === 'DELETE';
+    },
 
     async handleUpload() {
       const file = this.$refs.attachment.files[0];

@@ -39,5 +39,5 @@ public class SeriesData extends AbstractIdEntity {
     @OneToMany(cascade = CascadeType.ALL)
     @OrderBy("creationDate")
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<SeriesDocument> documentsInSeries;
+    private List<SeriesDocument> documents;
 }
