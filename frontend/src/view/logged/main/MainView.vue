@@ -56,8 +56,7 @@ export default {
         { title: 'Dokumenty', address: '/app/documents', icon: 'description' },
         { title: 'Moje dokumenty', address: '/app/documents/own', icon: 'description' },
         { title: 'Zbiory', address: '/app/series', icon: 'folder_open' },
-        { title: 'Moje zbiory', address: '/app/series/own', icon: 'folder_open' },
-        { title: 'Role w dokumentach', address: '/app/document-roles', icon: 'portrait' }
+        { title: 'Moje zbiory', address: '/app/series/own', icon: 'folder_open' }
       ],
     }
   },
@@ -67,6 +66,7 @@ export default {
       this.user = successResponse;
       if (this.adminLogged()) {
         this.links.push(
+            { title: 'Role w dokumentach', address: '/app/document-roles', icon: 'portrait' },
             { title: 'Użytkownicy', address: '/app/users', icon: 'person' }
         )
       }
