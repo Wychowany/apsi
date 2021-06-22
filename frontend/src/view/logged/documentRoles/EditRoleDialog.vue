@@ -60,7 +60,8 @@ export default {
       dialog: false,
       accessTypes: [
         { id: "READ", name: "Podgląd" },
-        { id: "UPDATE", name: "Edycja" }
+        { id: "UPDATE", name: "Edycja" },
+        { id: "DELETE", name: "Usuwanie" }
       ]
     };
   },
