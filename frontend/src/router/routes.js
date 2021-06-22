@@ -21,7 +21,6 @@ import CreateSeriesView from "@/view/logged/series/CreateSeriesView";
 import EditSeriesView from "@/view/logged/series/EditSeriesView";
 import DocumentAccessView from "@/view/logged/documents/DocumentAccessView";
 import DocumentRolesView from "@/view/logged/documentRoles/DocumentRolesView";
-import SeriesAccessDialog from "@/view/logged/series/SeriesAccessDialog";
 import SeriesAccessView from "@/view/logged/series/SeriesAccessView";
 Vue.use(VueRouter);
 
