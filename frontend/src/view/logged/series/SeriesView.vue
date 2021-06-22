@@ -11,7 +11,8 @@
         :items-per-page="10"
         class="elevation-1">
       <template v-slot:item.actions="{ item }">
-        <v-icon small @click="editSeries(item)">edit</v-icon>
+        <v-icon small v-if=editAllowed(item) @click="editSeries(item)">edit</v-icon>
+        <v-icon small v-else-if=readAllowed(item) @click="editSeries(item)" >description</v-icon>
       </template>
     </v-data-table>
   </div>
@@ -49,7 +50,19 @@ export default {
 
     editSeries(item) {
       this.$router.push("/app/series/edit/" + item.id);
-    }
+    },
+    editAllowed(item) {
+
+
+       return item.isAuthor || item.accessType === 'UPDATE';
+
+       },
+
+        readAllowed(item) {
+
+              return !item.isAuthor && (item.accessType === 'READ') ;
+
+          },
   }
 }
 </script>

@@ -34,7 +34,7 @@
           <v-toolbar dark color="lighter">
           <v-toolbar-title>Dokumenty</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn @click="seriesDocumentDialog = true" color="light"
+          <v-btn @click="seriesDocumentDialog = true" v-if="this.accessType==='UPDATE'" color="light"
                  style="color: black" class="ma-5">Dodaj dokument</v-btn>
         </v-toolbar>
         <v-alert type="info" class="ma-5" v-if="series.seriesDocuments.length === 0">
