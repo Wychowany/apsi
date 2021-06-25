@@ -44,7 +44,7 @@
         <div class="ma-5">
           <div v-for="(document, idx) in series.seriesDocuments" :key="'document-' + idx" class="mt-1 ml-5">
             <strong class="mr-2">{{ idx + 1 }}.</strong>
-            <span> {{ accessibleDocuments.find(d => d.id === document.documentId).name + ", wersja: " + document.version }} </span>
+            <span> {{ documents.find(d => d.id === document.documentId).name + ", wersja: " + document.version }} </span>
             <v-icon small class="ml-4" color="blue" @click="openDocument(document)">description</v-icon>
             <v-icon small class="ml-4" color="red" v-if="editAllowed()" @click="removeDocument(idx)">delete</v-icon>
           </div>
@@ -88,14 +88,16 @@ export default {
       versionsLoaded: false,
       seriesLoaded: false,
       accessibleDocumentsLoaded: false,
+      documentsLoaded: false,
       saveSeriesDialog: false,
       seriesDocumentDialog: false,
       accessibleDocuments: [],
+      documents: [],
     };
   },
   computed: {
     dataLoaded() {
-      return this.versionsLoaded && this.seriesLoaded && this.accessibleDocumentsLoaded;
+      return this.versionsLoaded && this.seriesLoaded && this.accessibleDocumentsLoaded && this.documentsLoaded;
     }
   },
 
@@ -115,6 +117,13 @@ export default {
     api.get(this, '/documents/list', null,successResponse => {
       this.accessibleDocuments = successResponse;
       this.accessibleDocumentsLoaded = true;
+    }, errorResponse => {
+      console.log(errorResponse);
+    });
+
+    api.get(this, '/documents/all', null,successResponse => {
+      this.documents = successResponse;
+      this.documentsLoaded = true;
     }, errorResponse => {
       console.log(errorResponse);
     });
