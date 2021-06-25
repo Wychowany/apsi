@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -85,8 +86,10 @@ class SeriesController {
     }
 
     @DeleteMapping
+    @Transactional
     public ResponseEntity<?> deleteSeries(@RequestParam Long id) {
         logger.info("User with id {} requested series with id: {} removal", identity.getRawId(), id);
+        seriesAccessRepository.deleteBySeriesId(id);
         seriesRepository.deleteById(id);
         return ResponseEntity.ok(new OkResponse());
     }
@@ -117,7 +120,7 @@ class SeriesController {
 
     private List<SeriesData> prepareNewSeriesDataList(Series series, CreateSeriesDTO createSeriesDTO, User author) {
         SeriesData seriesData = new SeriesData(series, createSeriesDTO.getSeriesVersion(), author);
-        seriesData.setDocumentsInSeries(prepareDocumentsInSeries(seriesData, createSeriesDTO.getDocuments()));
+        seriesData.setDocuments(prepareDocumentsInSeries(seriesData, createSeriesDTO.getDocuments()));
 
         return List.of(seriesData);
     }
@@ -140,8 +143,7 @@ class SeriesController {
 
     private SeriesData prepareSeriesDataListExtension(Series series, EditSeriesDTO editSeriesDTO, User author) {
         SeriesData seriesData = new SeriesData(series, editSeriesDTO.getSeriesVersion(), author);
-        seriesData.setDocumentsInSeries(prepareDocumentsInSeries(seriesData, editSeriesDTO.getDocuments()));
-
+        seriesData.setDocuments(prepareDocumentsInSeries(seriesData, editSeriesDTO.getDocuments()));
         return seriesData;
     }
 }

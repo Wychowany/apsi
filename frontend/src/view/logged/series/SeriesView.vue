@@ -11,8 +11,9 @@
         :items-per-page="10"
         class="elevation-1">
       <template v-slot:item.actions="{ item }">
-        <v-icon small v-if=editAllowed(item) @click="editSeries(item)">edit</v-icon>
-        <v-icon small v-else-if=readAllowed(item) @click="editSeries(item)" >description</v-icon>
+        <v-icon small @click="editSeries(item)" v-if="editAllowed(item)">edit</v-icon>
+        <v-icon small @click="editSeries(item)" v-else-if="readAllowed(item)">description</v-icon>
+        <v-icon small @click="deleteSeries(item)" class="ml-3" v-if="deleteAllowed(item)">delete</v-icon>
       </template>
     </v-data-table>
   </div>
@@ -51,18 +52,25 @@ export default {
     editSeries(item) {
       this.$router.push("/app/series/edit/" + item.id);
     },
-    editAllowed(item) {
 
-
-       return item.isAuthor || item.accessType === 'UPDATE';
-
-       },
-
-        readAllowed(item) {
-
-              return !item.isAuthor && (item.accessType === 'READ') ;
-
+    deleteSeries(item) {
+      api.delete(this, "/series/", {id: item.id}, () => {
+            this.series = this.series.filter(d => d.id !== item.id);
           },
+          errorResponse => {
+            console.log(errorResponse);
+          });
+    },
+
+    deleteAllowed(item) {
+      return item.isAuthor || item.accessType === 'DELETE';
+    },
+    editAllowed(item) {
+      return item.isAuthor || item.accessType === 'UPDATE' || item.accessType === 'DELETE';
+    },
+    readAllowed(item) {
+      return !item.isAuthor && item.accessType === 'READ';
+    }
   }
 }
 </script>

@@ -13,6 +13,7 @@
       <template v-slot:item.actions="{ item }">
         <v-icon small @click="editDocument(item)" v-if="editAllowed(item)">edit</v-icon>
         <v-icon small @click="editDocument(item)" v-else-if="readAllowed(item)">description</v-icon>
+        <v-icon small @click="deleteDocument(item)" class="ml-3" v-if="deleteAllowed(item)">delete</v-icon>
       </template>
     </v-data-table>
   </div>
@@ -32,9 +33,6 @@ export default {
         {text: 'Akcje', sortable: false, value: 'actions'},
       ],
       documents: [],
-      roles:[],
-      ids:[],
-      elements_filled:false
     }
   },
 
@@ -44,19 +42,7 @@ export default {
     }, errorResponse => {
       console.log(errorResponse);
     });
-    api.get(this, '/documents/users-list', null,successResponse => {
-          this.roles = successResponse;
-        }, errorResponse => {
-          console.log(errorResponse);
-        });
-
-
-
-
-
-
   },
-
 
   methods: {
     createDocument() {
@@ -67,34 +53,27 @@ export default {
       this.$router.push("/app/documents/edit/" + item.id);
     },
 
+    deleteDocument(item) {
+      api.delete(this, "/documents/", {id: item.id}, () => {
+            this.documents = this.documents.filter(d => d.id !== item.id);
+          },
+          errorResponse => {
+            console.log(errorResponse);
+          });
+    },
+
+    deleteAllowed(item) {
+      return item.isAuthor || item.documentAccessType === 'DELETE' || item.documentRoleAccessType === 'DELETE';
+    },
+
     editAllowed(item) {
-    var rola=-1;
-   for (var i=0;i<this.roles.length;i++){
-   if ((this.roles[i].doc_id/1)===(item.id/1)) rola=i;
-   }
-   if (rola <0) {
-
-   return item.isAuthor || item.accessType === 'UPDATE';
-
-   }
-    else {
-   return item.isAuthor || (item.accessType === 'UPDATE' && this.roles[rola]['accesstype']==='UPDATE');}
+      return item.isAuthor || item.documentAccessType === 'UPDATE' || item.documentRoleAccessType === 'UPDATE'
+          || item.documentAccessType === 'DELETE' || item.documentRoleAccessType === 'DELETE';
     },
 
     readAllowed(item) {
-         var rola=-1;
-           for (var i=0;i<this.roles.length;i++){
-           if (this.roles[i].doc_id===item.id) rola=i;
-           }
-           if (rola <0) {
-      return !item.isAuthor && item.accessType === 'READ' ;}
-      else {
-          return !item.isAuthor && (item.accessType === 'READ' || this.roles[rola]['accesstype']==='READ');}
-
-      }
-
-
-
+      return !item.isAuthor && (item.documentAccessType === 'READ' || item.documentRoleAccessType === 'READ');
+    }
   }
 }
 </script>

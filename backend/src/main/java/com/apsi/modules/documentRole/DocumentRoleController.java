@@ -15,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
-import java.lang.System.*;
 
 @RestController
 @RequestMapping("/document-roles")
@@ -36,24 +34,17 @@ public class DocumentRoleController {
     @GetMapping("/list")
     public ResponseEntity<?> getDocumentRoles() {
         List<DocumentRole> documentRoles = documentRoleRepository.findAll();
-
-
         List<DocumentRoleDTO> response = documentRoles.stream().map(DocumentRoleDTO::new).collect(Collectors.toList());
-
-
-
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
     public ResponseEntity<?> createDocumentRole(@RequestBody CreateDocumentRoleDTO createDocumentRoleDTO) {
         logger.info("User with id {} requested new document role creation with data: {}", identity.getRawId(), createDocumentRoleDTO.toString());
-
         DocumentRole documentRole = DocumentRole.builder()
                 .name(createDocumentRoleDTO.getName())
-                .accesstype(createDocumentRoleDTO.getAccesstype())
+                .accessType(createDocumentRoleDTO.getAccessType())
                 .build();
-
         DocumentRole savedDocumentRole = documentRoleRepository.save(documentRole);
         return ResponseEntity.ok(new IdResponse(savedDocumentRole.getId()));
     }
@@ -63,7 +54,7 @@ public class DocumentRoleController {
         logger.info("User with id {} requested document role edition with data: {}", identity.getRawId(), editDocumentRoleDTO.toString());
         DocumentRole documentRole = documentRoleRepository.findById(editDocumentRoleDTO.getId()).orElseThrow();
         documentRole.setName(editDocumentRoleDTO.getName());
-        documentRole.setAccesstype(editDocumentRoleDTO.getAccesstype());
+        documentRole.setAccessType(editDocumentRoleDTO.getAccessType());
         documentRoleRepository.save(documentRole);
         return ResponseEntity.ok(new OkResponse());
     }

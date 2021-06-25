@@ -34,25 +34,25 @@
           <v-toolbar dark color="lighter">
           <v-toolbar-title>Dokumenty</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn @click="seriesDocumentDialog = true" v-if="this.accessType==='UPDATE'" color="light"
+          <v-btn @click="seriesDocumentDialog = true" v-if="editAllowed()" color="light"
                  style="color: black" class="ma-5">Dodaj dokument</v-btn>
         </v-toolbar>
         <v-alert type="info" class="ma-5" v-if="series.seriesDocuments.length === 0">
           Brak dodanych dokumentów.
         </v-alert>
 
-        <div class="ma-5" >
+        <div class="ma-5">
           <div v-for="(document, idx) in series.seriesDocuments" :key="'document-' + idx" class="mt-1 ml-5">
             <strong class="mr-2">{{ idx + 1 }}.</strong>
             <span> {{ accessibleDocuments.find(d => d.id === document.documentId).name + ", wersja: " + document.version }} </span>
             <v-icon small class="ml-4" color="blue" @click="openDocument(document)">description</v-icon>
-            <v-icon small v-if=isUpdate() class="ml-4" color="red"  @click="removeDocument(idx)" >delete</v-icon>
+            <v-icon small class="ml-4" color="red" v-if="editAllowed()" @click="removeDocument(idx)">delete</v-icon>
           </div>
         </div>
       </v-flex>
     </v-layout>
 
-    <v-btn @click="saveSeriesDialog = true" v-if="this.accessType==='UPDATE'" color="primary" style="color: black" class="ma-5">Zapisz nową wersję</v-btn>
+    <v-btn @click="saveSeriesDialog = true" v-if="editAllowed()" color="primary" style="color: black" class="ma-5">Zapisz nową wersję</v-btn>
     <v-btn @click="returnPage()" color="primary" style="color: black" class="ma-5 ml-1">Powrót</v-btn>
 
     <EditTextDialog :header="'Dodanie nowej wersji zbioru'" :show="saveSeriesDialog" :label="'Wersja'"
@@ -112,7 +112,7 @@ export default {
 
   created() {
 
-    api.get(this, '/documents/list ', null,successResponse => {
+    api.get(this, '/documents/all', null,successResponse => {
       this.accessibleDocuments = successResponse;
       this.accessibleDocumentsLoaded = true;
     }, errorResponse => {
@@ -153,9 +153,7 @@ export default {
             console.log(errorResponse);
           });
     },
-    isUpdate(){
-    return this.accessType==='UPDATE';
-    },
+
     prepareRequest(version) {
       return {
         id: this.$route.params.id,
@@ -180,6 +178,10 @@ export default {
 
     returnPage() {
       this.$router.push("/app/series");
+    },
+
+    editAllowed() {
+      return this.accessType === 'UPDATE' || this.accessType === 'DELETE';
     },
   }
 

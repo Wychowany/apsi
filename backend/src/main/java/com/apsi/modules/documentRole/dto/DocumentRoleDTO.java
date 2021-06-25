@@ -11,19 +11,11 @@ public class DocumentRoleDTO {
 
     private String name;
 
-    private DocumentRoleAccessType accesstype;
+    private DocumentRoleAccessType accessType;
 
-    private Long doc_id;
     public DocumentRoleDTO(DocumentRole documentRole) {
         this.id = documentRole.getId();
         this.name = documentRole.getName();
-        this.accesstype = documentRole.getAccesstype();
+        this.accessType = documentRole.getAccessType();
     }
-    public DocumentRoleDTO(DocumentRole documentRole, Long doc_id) {
-        this.id = documentRole.getId();
-        this.name = documentRole.getName();
-        this.accesstype = documentRole.getAccesstype();
-        this.doc_id = doc_id;
-    }
-
 }
