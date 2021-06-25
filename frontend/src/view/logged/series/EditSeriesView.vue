@@ -112,7 +112,7 @@ export default {
 
   created() {
 
-    api.get(this, '/documents/all', null,successResponse => {
+    api.get(this, '/documents/list', null,successResponse => {
       this.accessibleDocuments = successResponse;
       this.accessibleDocumentsLoaded = true;
     }, errorResponse => {
